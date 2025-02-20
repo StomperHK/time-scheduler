@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    <title>Gerenciador de Horário</title>
+
+    <template id="schedule">
+      <li data-js="schedule" class="flex items-center gap-4">
+        <time data-js="time" class="font-bold text-3xl">00:00</time>
+        <input data-js="client-name" type="text" maxlength="30" class="w-full p-2 border-2 rounded-sm border-blue-500 outline-0 focus:border-blue-700" placeholder="nome do cliente" />
+        <button data-js="button" class="btn btn-sm bi-three-dots-vertical w-4"></button>
+      </li>
+    </template>
+
+    <template id="schedule-menu">
+      <ul data-js="schedule-menu" class="absolute top-0 right-0 bg-zinc-100 border-2 border-blue-600 shadow-xl rounded-md p-2 hidden">
+        <li class="hover:bg-blue-600 hover:text-zinc-100 p-2">apagar</li>
+      </ul>
+
+    </template>
+  </head>
+  <body class="bg-zinc-200">
+    <header class="flex justify-end items-center p-8 mb-8 relative">
+      <span class="absolute top-1/2 left-1/2 -translate-1/2 text-4xl font-bold">Horários</span>
+      <button title="configurações" class="btn bi-gear-fill"></button>
+    </header>
+
+    <main class="bg-zinc-100/60 border-2 border-blue-600 shadow-xl rounded-md p-4 w-[90%] max-w-4xl m-auto mb-12">
+      <div class="flex justify-end gap-4 mb-4">   <!-- button controls -->
+        <button class="btn btn-text btn-red">apagar tudo <span class="bi-trash-fill"></span></button>
+        <button class="btn btn-text">copiar tabela <span class="bi-clipboard-fill"></span></button>
+      </div>
+
+      <ol id="schedules" class="[&>*+*]:mt-4">
+      </ol>
+    </main>
+
+    <script type="module" defer src="/src/main.js"></script>
+  </body>
+</html>

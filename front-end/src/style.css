@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  
+}
+
+@theme {
+
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+    font-family: "Nunito Sans", serif;
+  }
+
+  [class^="bi"] {
+    @apply text-xl;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply min-w-12 h-12 p-2 px-4 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-500;
+  }
+
+  .btn-text {
+    @apply flex items-center h-10 justify-center gap-2;
+  }
+
+  .btn-red {
+    @apply bg-red-600 active:bg-red-500;
+  }
+
+  .btn-sm {
+    @apply min-w-8 h-8 p-0;
+  }
+
+  @media (pointer-events: none) {
+    .btn {
+      @apply cursor-default;
+    }
+  }
+}
