@@ -3,6 +3,10 @@ import { ScheduleTime } from "./ScheduleTime";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 
+const deleteSchedulesButton = document.querySelector("[data-js='delete-schedules']")
+const copyTableButton = document.querySelector("[data-js='copy-table']")
+const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
+
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1000);
 
 function debounce(fn, delay) {
@@ -114,9 +118,43 @@ function showAmountOfSchedules(savedSchedules) {
   amountOfSchedules.textContent = scheduleAmount + " cliente(s) para hoje";
 }
 
+function deleteSchedules() {
+  const nameInputs = document.querySelectorAll(
+    '[data-js="schedule"] [data-js="name-input"]'
+  );
+
+  for (const input of nameInputs) {
+    input.value = "";
+  }
+
+  saveDataOnLocalStorage();
+  showAmountOfSchedules({});
+}
+
+function copyTable() {
+  let outputText = "        "  + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
+  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
+
+  for (schedule in savedSchedules) {
+
+    outputText += `${schedule} - ${savedSchedules[schedule]}\n`
+  }
+
+  navigator.clipboard.writeText(outputText)
+    .then(() => {
+      alert("Tabela copiada com sucesso!")
+    })
+    .catch(() => {
+      alert("Erro ao copiar a tabela!")
+    })
+}
+
 function main() {
   allocateSpaceForSchedulesInLocalStorage();
   populateAppWithSchedules();
 }
 
 main();
+
+deleteSchedulesButton.addEventListener("click", deleteSchedules)
+copyTableButton.addEventListener("click", copyTable)

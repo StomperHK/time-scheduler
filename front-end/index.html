@@ -11,7 +11,7 @@
 
     <template id="schedule">
       <li data-js="schedule" class="flex items-center gap-4">
-        <time data-js="time" class="font-bold text-3xl">00:00</time>
+        <time data-js="time" class="font-bold text-2xl">00:00</time>
         <input data-js="name-input" type="text" maxlength="30" class="w-full p-2 border-2 rounded-sm border-blue-500 outline-0 focus:border-blue-700" placeholder="nome do cliente" />
         <button data-js="button" class="btn btn-sm bi-three-dots-vertical w-4"></button>
       </li>
@@ -36,8 +36,8 @@
       </div>
 
       <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
-        <button class="btn btn-text btn-red">apagar tudo <span class="bi-trash-fill"></span></button>
-        <button class="btn btn-text">copiar tabela <span class="bi-clipboard-fill"></span></button>
+        <button data-js="delete-schedules" class="btn btn-text btn-red">apagar tudo <span class="bi-trash-fill"></span></button>
+        <button data-js="copy-table" class="btn btn-text">copiar tabela <span class="bi-clipboard-fill"></span></button>
       </div>
 
       <ol id="schedules" class="p-4 [&>*+*]:mt-4">
