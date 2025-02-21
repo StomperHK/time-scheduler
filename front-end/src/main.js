@@ -34,10 +34,25 @@ function populateAppWithSchedules() {
 
     fragment.appendChild(schedule);
 
-    
+    showBreakTime(currentTime, fragment)
   }
 
   schedules.appendChild(fragment);
+}
+
+function showBreakTime(currentTime, fragment) {
+  if (currentTime.toString() === "12:00" || currentTime.toString() === "16:00") {
+    const breakTime = document.createElement("li");
+    const breakTimeText = document.createElement("time");
+    console.log(breakTimeText);
+    
+    breakTimeText.textContent = currentTime.toString();
+    breakTime.setAttribute("datetime", currentTime.toString());
+    breakTime.className = "!my-6 text-center font-bold";
+
+    breakTime.appendChild(breakTimeText);
+    fragment.appendChild(breakTime);
+  }
 }
 
 function main() {
