@@ -3,8 +3,11 @@ import { ScheduleTime } from "./ScheduleTime";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 
+const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']")
+const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']")
 const deleteSchedulesButton = document.querySelector("[data-js='delete-schedules']")
 const copyTableButton = document.querySelector("[data-js='copy-table']")
+const modalCloseButtons = Array.from(document.querySelectorAll("[data-js='close-button']"));
 const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
 
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1000);
@@ -44,6 +47,9 @@ function showScheduleMenu(event) {
 function allocateSpaceForSchedulesInLocalStorage() {
   if (!localStorage.getItem("schedules")) {
     localStorage.setItem("schedules", "{}");
+  }
+  if (!localStorage.getItem("userPreferences")) {
+    localStorage.setItem("userPreferences", "{'openingTime': '08:00', 'closingTime': '18:30', 'sessionDuration': 30}");
   }
 }
 
@@ -118,6 +124,22 @@ function showAmountOfSchedules(savedSchedules) {
   amountOfSchedules.textContent = scheduleAmount + " cliente(s) para hoje";
 }
 
+function openUserPreferences() {
+  const userPreferencesModal = document.querySelector("[data-js='user-preferences-modal']");
+  userPreferencesModal.show();
+}
+
+function saveUserPreferences() {
+  const newUserPreferences = {}
+  const userPreferencesSelects = Array.from(document.querySelectorAll("[data-js='user-preferences-modal'] select")).forEach((select) => {
+      newUserPreferences[select.name] = select.value;
+    }
+  )
+
+  localStorage.setItem("userPreferences", JSON.parse(newUserPreferences));
+  
+}
+
 function deleteSchedules() {
   const nameInputs = document.querySelectorAll(
     '[data-js="schedule"] [data-js="name-input"]'
@@ -127,7 +149,7 @@ function deleteSchedules() {
     input.value = "";
   }
 
-  saveDataOnLocalStorage();
+  localStorage.setItem("schedule", "{}");
   showAmountOfSchedules({});
 }
 
@@ -149,6 +171,13 @@ function copyTable() {
     })
 }
 
+function closeAssociatedModal(event) {
+  const modal = event.target.closest(".modal");
+
+  modal.close()
+  
+}
+
 function main() {
   allocateSpaceForSchedulesInLocalStorage();
   populateAppWithSchedules();
@@ -156,5 +185,8 @@ function main() {
 
 main();
 
+userPreferencesButton.addEventListener("click", openUserPreferences)
+saveUserPreferencesButton.addEventListener("click", saveUserPreferences)
 deleteSchedulesButton.addEventListener("click", deleteSchedules)
 copyTableButton.addEventListener("click", copyTable)
+modalCloseButtons.forEach((button) => button.addEventListener("click", closeAssociatedModal));
