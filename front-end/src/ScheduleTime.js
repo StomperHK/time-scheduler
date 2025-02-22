@@ -23,7 +23,6 @@ export class ScheduleTime {
   }
 
   isSmallerThanOrEqual(time) {
-    console.log(this.minute, time.hour)
     return this.hour < time.hour || (this.hour === time.hour && this.minute <= time.minute)
   }
 }

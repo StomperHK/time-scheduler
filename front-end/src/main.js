@@ -53,6 +53,15 @@ function allocateSpaceForSchedulesInLocalStorage() {
   }
 }
 
+function applyUserPreferences() {
+  const userPreferencesSelects = document.querySelectorAll("[data-js='user-preferences-modal'] select");
+  const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
+
+  for (const select of userPreferencesSelects) {
+    select.value = userPreferences[select.name];
+  }
+}
+
 function populateAppWithSchedules() {
   const fragment = document.createDocumentFragment();
   const scheduleTemplate = document.getElementById("schedule");
@@ -61,7 +70,8 @@ function populateAppWithSchedules() {
 
   const currentTime = new ScheduleTime(8, 0);
   const endTime = new ScheduleTime(18, 0);
-  let count = 0;
+  let firstBreakTimePassed = false
+  let secondBreakTimePassed = false
 
   while (currentTime.isSmallerThanOrEqual(endTime)) {
     const schedule = scheduleTemplate.content.cloneNode(true);
@@ -82,7 +92,15 @@ function populateAppWithSchedules() {
 
     fragment.appendChild(schedule);
 
-    showBreakTime(currentTime, fragment);
+    if (currentTime.hour >= 12 && !firstBreakTimePassed) {
+      showBreakTime(currentTime, fragment)
+      firstBreakTimePassed = true
+    }
+
+    if (currentTime.hour >= 16 && !secondBreakTimePassed) {
+      showBreakTime(currentTime, fragment)
+      secondBreakTimePassed = true
+    }
   }
 
   showAmountOfSchedules(savedSchedules);
@@ -91,22 +109,16 @@ function populateAppWithSchedules() {
 }
 
 function showBreakTime(currentTime, fragment) {
-  if (
-    currentTime.toString() === "12:00" ||
-    currentTime.toString() === "16:00"
-  ) {
-    const breakTime = document.createElement("li");
-    const breakTimeText = document.createElement("time");
-    console.log(breakTimeText);
+  const breakTime = document.createElement("li");
+  const breakTimeText = document.createElement("time");
 
-    breakTimeText.textContent = currentTime.toString();
-    breakTime.setAttribute("datetime", currentTime.toString());
-    breakTime.className = "!my-6 text-center font-bold";
-    breakTimeText.className = "text-gray-500 text-xl";
+  breakTimeText.textContent = currentTime.toString();
+  breakTime.setAttribute("datetime", currentTime.toString());
+  breakTime.className = "!my-6 text-center font-bold";
+  breakTimeText.className = "text-gray-500 text-xl";
 
-    breakTime.appendChild(breakTimeText);
-    fragment.appendChild(breakTime);
-  }
+  breakTime.appendChild(breakTimeText);
+  fragment.appendChild(breakTime);
 }
 
 function showAmountOfSchedules(savedSchedules) {
@@ -136,8 +148,7 @@ function saveUserPreferences() {
     }
   )
 
-  localStorage.setItem("userPreferences", JSON.parse(newUserPreferences));
-  
+  localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
 }
 
 function deleteSchedules() {
@@ -180,6 +191,7 @@ function closeAssociatedModal(event) {
 
 function main() {
   allocateSpaceForSchedulesInLocalStorage();
+  applyUserPreferences();
   populateAppWithSchedules();
 }
 
