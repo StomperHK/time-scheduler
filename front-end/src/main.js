@@ -48,13 +48,14 @@ function saveDataOnLocalStorage() {
     newSchedules.data[input.previousElementSibling.textContent] = input.value;
   }
 
+  showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data))
+
   newSchedules.localUserPreferences = JSON.parse(
     localStorage.getItem("schedules")
   ).localUserPreferences;
 
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
 }
-
 
 function allocateSpaceForSchedulesInLocalStorage() {
   if (!localStorage.getItem("schedules")) {
@@ -97,6 +98,8 @@ function applyUserPreferences() {
 
 function returnAmountOfFilledSchedules(savedSchedulesData) {
   let scheduleAmount = 0;
+  console.log(savedSchedulesData);
+  
 
   for (const val in savedSchedulesData) {
     if (savedSchedulesData[val] !== "") {
@@ -127,7 +130,7 @@ function reflectUserPreferencesOnPreferencsForm() {
   });
 }
 
-function populateAppWithSchedules(savedSchedules) {
+function populateAppWithSchedules(savedSchedules, recalculate=false) {
   const fragment = document.createDocumentFragment();
   const scheduleTemplate = document.getElementById("schedule");
   const schedules = document.getElementById("schedules");
@@ -147,7 +150,9 @@ function populateAppWithSchedules(savedSchedules) {
     const schedule = scheduleTemplate.content.cloneNode(true);
     const time = schedule.querySelector('[data-js="time"]');
     const input = schedule.querySelector('[data-js="name-input"]');
-    const deleteCustomerButton = schedule.querySelector('[data-js="delete-button"]');
+    const deleteCustomerButton = schedule.querySelector(
+      '[data-js="delete-button"]'
+    );
 
     time.textContent = currentTime.toString();
     time.setAttribute("datetime", currentTime.toString());
@@ -164,6 +169,10 @@ function populateAppWithSchedules(savedSchedules) {
 
     showBreakTime(currentTime, firstBreakTime, fragment);
     showBreakTime(currentTime, secondBreakTime, fragment);
+  }
+
+  if (recalculate) {
+    schedules.innerHTML = ""
   }
 
   schedules.appendChild(fragment);
@@ -192,7 +201,7 @@ function deleteCustomer(event) {
   const scheduleItem = event.target.closest('[data-js="schedule"]');
   const nameInput = scheduleItem.querySelector('[data-js="name-input"]');
   nameInput.value = "";
-    
+
   debouncedSaveDataOnLocalStorage();
 }
 
@@ -213,8 +222,24 @@ function saveUserPreferences() {
     newUserPreferences[select.name] =
       select.name === "sessionDuration" ? Number(select.value) : select.value;
   });
+  
+  applyUserPreferencesEffects(newUserPreferences)
 
   localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences)); 
+}
+
+function applyUserPreferencesEffects(newUserPreferences) {
+  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
+  const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data)
+
+  console.log(filledSchedules)
+
+  if (!filledSchedules) {
+    savedSchedules.localUserPreferences = newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
+    localStorage.setItem("schedules", JSON.stringify(savedSchedules));
+
+    populateAppWithSchedules(savedSchedules, true)
+  }
 }
 
 function deleteSchedules() {
@@ -226,8 +251,9 @@ function deleteSchedules() {
     input.value = "";
   }
 
-  localStorage.setItem("schedule", "{}");
-  showAmountOfSchedules({});
+  localStorage.setItem("schedules", '{"data": {}, "localUserPreferences": {}}');
+  applyUserPreferencesEffects();
+  showAmountOfFilledSchedules(0);
 }
 
 function copyTable() {
@@ -273,6 +299,7 @@ function main() {
   showAmountOfFilledSchedules(amountOfFilledSchedules);
   defineIfLocalUserPreferencesWillGetOverwritten(
     savedSchedules,
+
     amountOfFilledSchedules
   );
   reflectUserPreferencesOnPreferencsForm();
