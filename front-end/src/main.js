@@ -55,14 +55,6 @@ function saveDataOnLocalStorage() {
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
 }
 
-function showScheduleMenu(event) {
-  const scheduleButton = event.target;
-  const scheduleMenu = document.querySelector("schedule-menu");
-
-  if (scheduleMenu) {
-    scheduleMenu.remove();
-  }
-}
 
 function allocateSpaceForSchedulesInLocalStorage() {
   if (!localStorage.getItem("schedules")) {
@@ -146,12 +138,12 @@ function populateAppWithSchedules(savedSchedules) {
     const schedule = scheduleTemplate.content.cloneNode(true);
     const time = schedule.querySelector('[data-js="time"]');
     const input = schedule.querySelector('[data-js="name-input"]');
-    const scheduleButton = schedule.querySelector('[data-js="button"]');
+    const deleteCustomerButton = schedule.querySelector('[data-js="delete-button"]');
 
     time.textContent = currentTime.toString();
     time.setAttribute("datetime", currentTime.toString());
     input.addEventListener("input", debouncedSaveDataOnLocalStorage);
-    scheduleButton.addEventListener("click", showScheduleMenu);
+    deleteCustomerButton.addEventListener("click", deleteCustomer);
 
     if (currentTime.toString() in savedSchedules.data) {
       input.value = savedSchedules.data[currentTime.toString()];
@@ -185,6 +177,14 @@ function showBreakTime(currentTime, breakTime, fragment) {
     breakTimeLi.appendChild(breakTimeText);
     fragment.appendChild(breakTimeLi);
   }
+}
+
+function deleteCustomer(event) {
+  const scheduleItem = event.target.closest('[data-js="schedule"]');
+  const nameInput = scheduleItem.querySelector('[data-js="name-input"]');
+  nameInput.value = "";
+    
+  debouncedSaveDataOnLocalStorage();
 }
 
 function openUserPreferences() {
