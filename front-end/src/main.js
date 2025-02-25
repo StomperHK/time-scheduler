@@ -214,7 +214,7 @@ function saveUserPreferences() {
       select.name === "sessionDuration" ? Number(select.value) : select.value;
   });
 
-  localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
+  localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences)); 
 }
 
 function deleteSchedules() {
