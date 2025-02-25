@@ -1,5 +1,5 @@
-import { ScheduleTime } from "./ScheduleTime";
-
+import { ScheduleTime } from "./utils/ScheduleTime";
+import { createToaster } from "./utils/createToaster";
 import "./style.css";
 
 const userPreferencesButton = document.querySelector(
@@ -25,7 +25,7 @@ const translatedDaysOfTheWeek = [
   "Sábado",
 ];
 
-const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1000);
+const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1500);
 
 function debounce(fn, delay) {
   let timeout;
@@ -47,13 +47,15 @@ function saveDataOnLocalStorage() {
     newSchedules.data[input.previousElementSibling.textContent] = input.value;
   }
 
-  showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data))
+  showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data));
 
   newSchedules.localUserPreferences = JSON.parse(
     localStorage.getItem("schedules")
   ).localUserPreferences;
 
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
+
+  createToaster("Dados Salvos");
 }
 
 function allocateSpaceForSchedulesInLocalStorage() {
@@ -89,7 +91,6 @@ function defineIfLocalUserPreferencesWillGetOverwritten(
 function returnAmountOfFilledSchedules(savedSchedulesData) {
   let scheduleAmount = 0;
   console.log(savedSchedulesData);
-  
 
   for (const val in savedSchedulesData) {
     if (savedSchedulesData[val] !== "") {
@@ -120,7 +121,7 @@ function reflectUserPreferencesOnPreferencsForm() {
   });
 }
 
-function populateAppWithSchedules(savedSchedules, recalculate=false) {
+function populateAppWithSchedules(savedSchedules, recalculate = false) {
   const fragment = document.createDocumentFragment();
   const scheduleTemplate = document.getElementById("schedule");
   const schedules = document.getElementById("schedules");
@@ -162,7 +163,7 @@ function populateAppWithSchedules(savedSchedules, recalculate=false) {
   }
 
   if (recalculate) {
-    schedules.innerHTML = ""
+    schedules.innerHTML = "";
   }
 
   schedules.appendChild(fragment);
@@ -212,23 +213,26 @@ function saveUserPreferences() {
     newUserPreferences[select.name] =
       select.name === "sessionDuration" ? Number(select.value) : select.value;
   });
-  
-  applyUserPreferencesEffects(newUserPreferences)
+
+  applyUserPreferencesEffects(newUserPreferences);
 
   localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
+
+  createToaster("Preferências Salvos")
 }
 
 function applyUserPreferencesEffects(newUserPreferences) {
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
-  const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data)
+  const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
-  console.log(filledSchedules)
+  console.log(filledSchedules);
 
   if (!filledSchedules) {
-    savedSchedules.localUserPreferences = newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
+    savedSchedules.localUserPreferences =
+      newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
     localStorage.setItem("schedules", JSON.stringify(savedSchedules));
 
-    populateAppWithSchedules(savedSchedules, true)
+    populateAppWithSchedules(savedSchedules, true);
   }
 }
 
@@ -258,10 +262,10 @@ function copyTable() {
   navigator.clipboard
     .writeText(outputText)
     .then(() => {
-      alert("Tabela copiada com sucesso!");
+      createToaster("Tabela copiada com sucesso!");
     })
     .catch(() => {
-      alert("Erro ao copiar a tabela!");
+      createToaster("Erro ao copiar a tabela", "error");
     });
 }
 
