@@ -8,6 +8,10 @@
 
 }
 
+@utility text-shadow-none {
+  text-shadow: none;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -16,9 +20,6 @@
     font-family: "Nunito Sans", serif;
   }
 
-  [class^="bi"] {
-    @apply text-xl;
-  }
 }
 
 @layer components {
@@ -48,6 +49,18 @@
 
   .modal .modal-header {
     @apply flex justify-between items-center mb-6;
+  }
+
+  .toast .body {
+    @apply !bg-blue-600 !text-white !shadow-xl !text-shadow-none;
+  }
+
+  .toast .body.info {
+    @apply !bg-blue-600 !text-white !shadow-xl
+  }
+
+  .toast .body.error {
+    @apply !bg-red-500 !text-white !shadow-xl
   }
 
   @media (pointer-events: none) {
