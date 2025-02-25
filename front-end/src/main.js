@@ -1,7 +1,6 @@
 import { ScheduleTime } from "./ScheduleTime";
 
 import "./style.css";
-import "bootstrap-icons/font/bootstrap-icons.min.css";
 
 const userPreferencesButton = document.querySelector(
   "[data-js='user-preferences-button']"

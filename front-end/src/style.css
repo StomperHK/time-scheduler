@@ -16,9 +16,6 @@
     font-family: "Nunito Sans", serif;
   }
 
-  [class^="bi"] {
-    @apply text-xl;
-  }
 }
 
 @layer components {
