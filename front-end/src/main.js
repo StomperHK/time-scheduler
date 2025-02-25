@@ -107,6 +107,17 @@ function showAmountOfFilledSchedules(amountOfFilledSchedules) {
   amountOfSchedules.textContent = amountOfFilledSchedules + " cliente(s) para hoje";
 }
 
+function reflectUserPreferencesOnPreferencsForm() {
+  const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
+  const userPreferencesSelects = Array.from(
+    document.querySelectorAll("[data-js='user-preferences-modal'] select")
+  );
+
+  userPreferencesSelects.forEach((select) => {
+    select.value = userPreferences[select.name];
+  });
+}
+
 function populateAppWithSchedules(savedSchedules) {
   const fragment = document.createDocumentFragment();
   const scheduleTemplate = document.getElementById("schedule");
@@ -226,6 +237,7 @@ function main() {
 
   showAmountOfFilledSchedules(amountOfFilledSchedules);
   defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules);
+  reflectUserPreferencesOnPreferencsForm()
   populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
 }
 
