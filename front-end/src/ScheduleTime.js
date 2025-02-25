@@ -1,29 +1,32 @@
 export class ScheduleTime {
   constructor(hour, minute) {
-    this.hour = hour
-    this.minute = minute
+    this.hour = hour;
+    this.minute = minute;
   }
 
   toString() {
-    return `${this.hour.toString().padStart(2, "0")}:${this.minute.toString().padStart(2, "0")}`
+    return `${this.hour.toString().padStart(2, "0")}:${this.minute
+      .toString()
+      .padStart(2, "0")}`;
   }
 
   increaseTime(minutesIncrease) {
-    minutesIncrease = 60 % minutesIncrease ? minutesIncrease : 30
+    const newMinute = (this.minute + minutesIncrease) % 60;
 
-    if (!((this.minute + minutesIncrease) % 60)) {
-      this.hour = this.hour + 1
-      this.minute = 0
-    }
-    else {
-      this.minute = this.minute + minutesIncrease
+    if (newMinute <= this.minute) {
+      this.hour = this.hour + 1;
+      this.minute = newMinute;
+    } else {
+      this.minute = newMinute;
     }
 
-    return this.toString()
+    return this.toString();
   }
 
   isSmallerThanOrEqual(time) {
-    console.log(this.minute, time.hour)
-    return this.hour < time.hour || (this.hour === time.hour && this.minute <= time.minute)
+    return (
+      this.hour < time.hour ||
+      (this.hour === time.hour && this.minute <= time.minute)
+    );
   }
 }
