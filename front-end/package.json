@@ -14,6 +14,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.7",
     "tailwindcss": "^4.0.7",
-    "toaster-js": "^2.2.3"
+    "toaster-js": "^2.2.3",
+    "vite-plugin-pwa": "^0.21.1"
   }
 }

@@ -1,8 +1,20 @@
 import { defineConfig } from "vite";
+import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [
-    tailwindcss()
+    tailwindcss(),
+    VitePWA({ 
+      registerType: "autoUpdate",
+      injectRegister: "inline",
+      manifest: false,
+      devOptions: {
+        enabled: true
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,jpg,svg}"],
+      }
+    })
   ]
 })

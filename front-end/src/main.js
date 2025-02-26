@@ -89,7 +89,9 @@ function defineIfLocalUserPreferencesWillGetOverwritten(
 }
 
 function applyUserPreferences() {
-  const userPreferencesSelects = document.querySelectorAll("[data-js='user-preferences-modal'] select");
+  const userPreferencesSelects = document.querySelectorAll(
+    "[data-js='user-preferences-modal'] select"
+  );
   const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
 
   for (const select of userPreferencesSelects) {
@@ -99,7 +101,6 @@ function applyUserPreferences() {
 
 function returnAmountOfFilledSchedules(savedSchedulesData) {
   let scheduleAmount = 0;
-  console.log(savedSchedulesData);
 
   for (const val in savedSchedulesData) {
     if (savedSchedulesData[val] !== "") {
@@ -227,14 +228,12 @@ function saveUserPreferences() {
 
   localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
 
-  createToaster("Preferências Salvos")
+  createToaster("Preferências Salvos");
 }
 
 function applyUserPreferencesEffects(newUserPreferences) {
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
   const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
-
-  console.log(filledSchedules);
 
   if (!filledSchedules) {
     savedSchedules.localUserPreferences =
@@ -264,7 +263,7 @@ function copyTable() {
     "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
 
-  for (schedule in savedSchedules) {
+  for (let schedule in savedSchedules) {
     outputText += `${schedule} - ${savedSchedules[schedule]}\n`;
   }
 
@@ -283,6 +282,27 @@ function closeAssociatedModal(event) {
 
   modal.close();
 }
+
+let deferredPrompt;
+const installButton = document.querySelector('[data-js="install-pwa-button"]');
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installButton.classList.remove("hidden");
+
+  installButton.addEventListener("click", () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        installButton.classList.add("hidden")
+      } else {
+        console.log("User dismissed the install prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+});
 
 function main() {
   allocateSpaceForSchedulesInLocalStorage();

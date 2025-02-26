@@ -8,7 +8,13 @@
     <script src="https://kit.fontawesome.com/5b3bf62810.js" crossorigin="anonymous"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <title>Gerenciador de Horários</title>
+    <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento.">
+
 
     <template id="schedule">
       <li data-js="schedule" class="flex items-center gap-4 relative">
@@ -23,24 +29,28 @@
       </li>
     </template>
   </head>
+
+
   <body class="bg-zinc-200">
-    <header class="flex justify-end items-center p-8 mb-4 relative">
-      <span class="absolute top-1/2 left-1/2 -translate-1/2 text-4xl font-bold">Horários</span>
-      <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
+    <header class="flex justify-end gap-4 items-center p-8 pb-0 mb-2 relative">
+      <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
+      <button data-js="user-preferences-button" title="preferências" class="btn "><i class="fa-solid fa-gear"></i></button>
     </header>
 
-    <main class="bg-zinc-100/60 border-2 border-blue-600 shadow-xl rounded-md w-[90%] max-w-3xl m-auto mb-12">
-      <div class="mb-8 p-4 py-10 bg-blue-600 text-white [background-image:url('/layered-peaks.svg')] [backgorund-position:bottom_right] bg-cover">
-        <h1 data-js="amount-of-schedules" class="text-2xl">0 Clientes para hoje</h1>
-      </div>
+    <main class="w-[90%] max-w-3xl m-auto mb-12">
+      <h1 class="mb-10 text-center text-4xl font-bold">Horários</h1>
 
-      <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
-        <button data-js="delete-schedules" class="btn btn-text btn-red">apagar tudo <i class="fa-solid fa-trash"></i></span></button>
-        <button data-js="copy-table" class="btn btn-text">copiar tabela <i class="fa-solid fa-copy"></i></button>
+      <div class="bg-zinc-100/60 border-2 border-blue-600 shadow-xl rounded-md">
+        <div class="mb-8 p-4 py-10 bg-blue-600 text-white [background-image:url('/layered-peaks.svg')] [background-position:bottom_right] bg-cover">
+          <h1 data-js="amount-of-schedules" class="text-2xl">0 Clientes para hoje</h1>
+        </div>
+        <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
+          <button data-js="delete-schedules" class="btn btn-text btn-red">apagar tudo <i class="fa-solid fa-trash"></i></span></button>
+          <button data-js="copy-table" class="btn btn-text">copiar tabela <i class="fa-solid fa-copy"></i></button>
+        </div>
+        <ol id="schedules" class="p-4 [&>*+*]:mt-4">
+        </ol>
       </div>
-
-      <ol id="schedules" class="p-4 [&>*+*]:mt-4">
-      </ol>
     </main>
 
     <dialog data-js="user-preferences-modal" class="modal">
@@ -119,6 +129,6 @@
       </div>
     </dialog>
 
-    <script type="module" defer src="/src/main.js"></script>
+    <script type="module" defer src="./src/main.js"></script>
   </body>
 </html>
