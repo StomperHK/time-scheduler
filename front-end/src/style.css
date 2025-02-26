@@ -28,7 +28,7 @@
   }
 
   .btn-text {
-    @apply flex items-center h-10 justify-center gap-2;
+    @apply flex items-center h-10 justify-center gap-2 font-semibold select-none;
   }
 
   .btn-red {
