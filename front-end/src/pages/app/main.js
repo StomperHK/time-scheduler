@@ -1,6 +1,6 @@
-import { ScheduleTime } from "./utils/ScheduleTime";
-import { createToaster } from "./utils/createToaster";
-import "./style.css";
+import { ScheduleTime } from "../../utils/ScheduleTime";
+import { createToaster } from "../../utils/createToaster";
+import "../../style.css";
 
 const userPreferencesButton = document.querySelector(
   "[data-js='user-preferences-button']"

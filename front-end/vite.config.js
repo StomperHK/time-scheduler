@@ -9,6 +9,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: "inline",
       manifest: false,
+      base: "src/pages",
       devOptions: {
         enabled: true
       },
@@ -16,5 +17,6 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,png,jpg,svg}"],
       }
     })
-  ]
+  ],
+  root: "src/pages",
 })
