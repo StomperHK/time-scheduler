@@ -49,7 +49,7 @@ app.post("/auth/login", async (req, res) => {
     return res.status(200).end()
   }
 
-  res.status(422).json({message: "wrong login"})
+  res.status(404).json({message: "wrong login"})
 })
 
 app.listen(process.env.PORT || 3000, () => {
