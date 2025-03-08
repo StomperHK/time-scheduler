@@ -31,6 +31,10 @@ async function login(event) {
     if (message === "wrong login") {
       toasterMessage = "Dados de login incorretos"
     }
+    
+    if (message === "server error") {
+      toasterMessage = "Erro ao acessar banco de dados"
+    }
 
     createToaster(toasterMessage, "error")
   }

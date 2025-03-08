@@ -25,14 +25,19 @@ app.post("/auth/register", async (req, res) => {
   }
   
   password = await bcrypt.hash(password, 10)
-  
-  const result = await userModel.createAccount(email, password)
 
-  if (result) {
-    return res.status(201).send()
+  try {
+    const result = await userModel.createAccount(email, password)
+
+    if (result) {
+      return res.status(201).send()
+    }
+
+    return res.status(422).json({message: "email registered"})
   }
-
-  return res.status(422).json({message: "email registered"})
+  catch (error) {
+    return res.status(500).json({message: "server error"})
+  }
 })
 
 app.post("/auth/login", async (req, res) => {
@@ -43,13 +48,18 @@ app.post("/auth/login", async (req, res) => {
     return res.status(422).json({message: "missing fields"})
   }
 
-  const result = await userModel.login(email, password)
+  try {
+    const result = await userModel.login(email, password)
 
-  if (result) {
-    return res.status(200).end()
+    if (result) {
+      return res.status(200).end()
+    }
+
+    res.status(404).json({message: "wrong login"})
+  } 
+  catch(error) {
+    return res.status(500).json({message: "server error"})
   }
-
-  res.status(404).json({message: "wrong login"})
 })
 
 app.listen(process.env.PORT || 3000, () => {

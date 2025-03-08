@@ -35,6 +35,10 @@ async function createAccount(event) {
     if (message === "email registered") {
       toasterMessage = "E-mail já registrado"
     }
+    
+    if (message === "server error") {
+      toasterMessage = "Erro ao acessar banco de dados"
+    }
 
     createToaster(toasterMessage, "error")
   }
