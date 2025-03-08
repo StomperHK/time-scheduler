@@ -39,7 +39,6 @@ async function createAccount(event) {
     createToaster(toasterMessage, "error")
   }
   else {
-    console.log("ok")
     createToaster("Conta criada com sucesso")
 
     setTimeout(() => {

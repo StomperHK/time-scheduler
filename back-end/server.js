@@ -8,7 +8,6 @@ import { sql } from "./lib/databaseConnection.js"
 import { User } from "./models/User.js"
 
 const app = express()
-const userModel = new User(sql)
 
 config()
 app.use(process.env.PRODUCTION === "true" ? cors({origin: /vercel\.app$/}) : cors({ origin: "*" }))
@@ -16,6 +15,7 @@ app.use(express.json())
 
 app.post("/auth/register", async (req, res) => {
   let {email, password} = req.body
+  const userModel = new User(sql)
 
   if (!email || !password) {
     return res.status(422).json({message: "missing fields"})
@@ -35,6 +35,22 @@ app.post("/auth/register", async (req, res) => {
   return res.status(422).json({message: "email registered"})
 })
 
+app.post("/auth/login", async (req, res) => {
+  let {email, password} = req.body
+  const userModel = new User(sql)
+
+  if (!email || !password) {
+    return res.status(422).json({message: "missing fields"})
+  }
+
+  const result = await userModel.login(email, password)
+
+  if (result) {
+    return res.status(200).end()
+  }
+
+  res.status(422).json({message: "wrong login"})
+})
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server is running")
