@@ -3,6 +3,7 @@ import { createToaster } from "../../utils/createToaster";
 import "../../style.css";
 
 const loginForm = document.querySelector('[data-js="login-form"]');
+const submitButton = document.querySelector('[type="submit"')
 
 validateUser()
 .then((userIsValid) => {
@@ -22,6 +23,8 @@ async function login(event) {
     password: formData.get("password"),
   });
 
+  disableButton()
+
   const response = await fetch(import.meta.env.VITE_API_URL + "/auth/login", {
     body: registerData,
     method: "POST",
@@ -29,6 +32,8 @@ async function login(event) {
       "Content-Type": "application/json",
     },
   });
+
+  enableButton()
 
   if (!response.ok) {
     const { message } = await response.json();
@@ -57,4 +62,24 @@ async function login(event) {
       window.location.href = "/app/";
     }, 2000);
   }
+}
+
+function disableButton() {
+  const [spinner, buttonText] = submitButton.children
+
+  submitButton.disabled = true
+  submitButton.classList.add("opacity-70")
+
+  spinner.classList.remove("hidden")
+  buttonText.classList.add("opacity-0")
+}
+
+function enableButton() {
+  const [spinner, buttonText] = submitButton.children
+
+  submitButton.disabled = false
+  submitButton.classList.add("opacity-100")
+
+  spinner.classList.add("hidden")
+  buttonText.classList.remove("opacity-0")
 }
