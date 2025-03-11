@@ -71,11 +71,12 @@ app.get("/user", checkToken, async (req, res) => {
   const userId = req.authorization
   const userModel = new User(sql);
   const sendUserData = req.query["send-user-data"] === "true"
-  
-  res.status(200)
 
   if (sendUserData) {
-    res.json(await userModel.getUserData(userId))
+    res.status(200).json(await userModel.getUserData(userId))
+  }
+  else {
+    res.status(204).send()
   }
 });
 
