@@ -4,9 +4,10 @@ import "../../style.css";
 
 const loginForm = document.querySelector('[data-js="login-form"]');
 
-validateUser().then((userIsValid) => {
+validateUser()
+.then((userIsValid) => {
   if (userIsValid) {
-    // window.location.href = "/app/";
+    window.location.href = "/app/";
   } else {
     loginForm.addEventListener("submit", login);
   }
@@ -21,7 +22,7 @@ async function login(event) {
     password: formData.get("password"),
   });
 
-  const response = await fetch("http://localhost:3000" + "/auth/login", {
+  const response = await fetch(import.meta.env.VITE_API_URL + "/auth/login", {
     body: registerData,
     method: "POST",
     headers: {

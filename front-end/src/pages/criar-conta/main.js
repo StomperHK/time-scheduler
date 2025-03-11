@@ -22,7 +22,7 @@ async function createAccount(event) {
     password: formData.get("password"),
   });
 
-  const response = await fetch("http://localhost:3000" + "/auth/register", {
+  const response = await fetch(import.meta.env.VITE_API_URL + "/auth/register", {
     body: registerData,
     method: "POST",
     headers: {

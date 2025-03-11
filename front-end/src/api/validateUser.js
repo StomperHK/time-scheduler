@@ -3,14 +3,12 @@ export async function validateUser() {
 
   if (!token) return false
 
-  const response = await fetch("http://localhost:3000" + "/user?send-user-data=false", {
+  const response = await fetch(import.meta.env.VITE_API_URL + "/user?send-user-data=false", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
-
-  console.log(await response.json())
 
   return response.ok
 }
