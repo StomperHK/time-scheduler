@@ -249,7 +249,11 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  await validateUser();
+  const userIsValid = await validateUser()
+
+  if (!userIsValid) {
+    window.location.href = "/criar-conta/"
+  }
 
   allocateSpaceForSchedulesInLocalStorage();
 
