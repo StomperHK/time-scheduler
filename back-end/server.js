@@ -1,67 +1,82 @@
-import express from "express"
-import { config } from "dotenv"
-import cors from "cors"
-import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
-import { sql } from "./lib/databaseConnection.js"
+import express from "express";
+import { config } from "dotenv";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+import bcrypt from "bcrypt";
+import { sql } from "./lib/databaseConnection.js";
 
-import { User } from "./models/User.js"
+import { User } from "./models/User.js";
+import { checkToken } from "./middlewares/checkToken.js";
 
-const app = express()
+const app = express();
+const isInProduction = process.env.PRODUCTION !== "false";
 
-config()
-app.use(process.env.PRODUCTION === "true" ? cors({origin: /vercel\.app$/}) : cors({ origin: "*" }))
-app.use(express.json())
+config();
+app.use(isInProduction ? cors({ origin: /vercel\.app$/ }) : cors({ origin: "*" }));
+app.use(express.json());
 
 app.post("/auth/register", async (req, res) => {
-  let {email, password} = req.body
-  const userModel = new User(sql)
+  let { email, password } = req.body;
+  const userModel = new User(sql);
 
   if (!email || !password) {
-    return res.status(422).json({message: "missing fields"})
+    return res.status(422).json({ message: "missing fields" });
   }
   if (password.length < 8) {
-    return res.status(422).json({message: "short password"})
+    return res.status(422).json({ message: "short password" });
   }
-  
-  password = await bcrypt.hash(password, 10)
+
+  password = await bcrypt.hash(password, 10);
 
   try {
-    const result = await userModel.createAccount(email, password)
+    const userId = await userModel.createAccount(email, password);
 
-    if (result) {
-      return res.status(201).send()
+    if (userId) {
+      const secret = process.env.SECRET;
+      const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
+      return res.status(200).json({token});
     }
 
-    return res.status(422).json({message: "email registered"})
+    return res.status(422).json({ message: "email registered" });
+  } catch (error) {
+    return res.status(500).json({ message: "server error" });
   }
-  catch (error) {
-    return res.status(500).json({message: "server error"})
-  }
-})
+});
 
 app.post("/auth/login", async (req, res) => {
-  let {email, password} = req.body
-  const userModel = new User(sql)
+  let { email, password } = req.body;
+  const userModel = new User(sql);
 
   if (!email || !password) {
-    return res.status(422).json({message: "missing fields"})
+    return res.status(422).json({ message: "missing fields" });
   }
 
   try {
-    const result = await userModel.login(email, password)
-
-    if (result) {
-      return res.status(200).end()
+    const userId = await userModel.login(email, password);
+    
+    if (userId) {
+      const secret = process.env.SECRET;
+      const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
+      return res.status(200).json({token});
     }
 
-    res.status(404).json({message: "wrong login"})
-  } 
-  catch(error) {
-    return res.status(500).json({message: "server error"})
+    res.status(404).json({ message: "wrong login" });
+  } catch (error) {
+    return res.status(500).json({ message: "server error" });
   }
-})
+});
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server is running")
-})
+app.get("/user", checkToken, async (req, res) => {
+  const userId = req.authorization
+  const userModel = new User(sql);
+  const sendUserData = req.query["send-user-data"] === "true"
+  
+  res.status(200)
+
+  if (sendUserData) {
+    res.json(await userModel.getUserData(userId))
+  }
+});
+
+app.listen(process.env.PORT || 3000);

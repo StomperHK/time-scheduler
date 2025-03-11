@@ -1,1 +1,2 @@
-GET http://localhost:3000/
+GET http://localhost:3000/user
+Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWRmMTFmMS1mM2ZhLTQyYjItOTY0Ni04M2M5YmJlOGViODgiLCJpYXQiOjE3NDE3MjU5MjAsImV4cCI6MTc0MjMzMDcyMH0.l4ugFHrEW4XBey0KhiQyVzJxkEVbzgbBbjfFG9LKJrA

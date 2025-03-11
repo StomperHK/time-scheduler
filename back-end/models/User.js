@@ -25,7 +25,7 @@ export class User {
         VALUES (${id}, ${email}, ${hashedPassword}, ${new Date()})
       `
 
-      return true
+      return id
     }
   }
 
@@ -35,7 +35,17 @@ export class User {
     `)[0]
     
     if (user) {
-      return await bcrypt.compare(password, user.password)
+      if (await bcrypt.compare(password, user.password)) {
+        return user.id
+      }
     }
+  }
+
+  async getUserData(userId) {
+    const user = (await this.#sql`
+      SELECT * FROM Users where id = ${userId}
+    `)[0]
+
+    return user
   }
 }

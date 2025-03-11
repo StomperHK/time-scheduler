@@ -1,29 +1,14 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
+import { validateUser } from "../../api/validateUser";
 import "../../style.css";
 
-const userPreferencesButton = document.querySelector(
-  "[data-js='user-preferences-button']"
-);
-const saveUserPreferencesButton = document.querySelector(
-  "[data-js='user-preferences-modal'] [data-js='save-button']"
-);
-const deleteSchedulesButton = document.querySelector(
-  "[data-js='delete-schedules']"
-);
+const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
+const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
+const deleteSchedulesButton = document.querySelector("[data-js='delete-schedules']");
 const copyTableButton = document.querySelector("[data-js='copy-table']");
-const modalCloseButtons = Array.from(
-  document.querySelectorAll("[data-js='close-button']")
-);
-const translatedDaysOfTheWeek = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-];
+const modalCloseButtons = Array.from(document.querySelectorAll("[data-js='close-button']"));
+const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1500);
 
@@ -38,9 +23,7 @@ function debounce(fn, delay) {
 
 function saveDataOnLocalStorage() {
   // debounce save data on local storage
-  const nameInputs = document.querySelectorAll(
-    '[data-js="schedule"] [data-js="name-input"]'
-  );
+  const nameInputs = document.querySelectorAll('[data-js="schedule"] [data-js="name-input"]');
   let newSchedules = { data: {}, localUserPreferences: {} };
 
   for (const input of nameInputs) {
@@ -49,9 +32,7 @@ function saveDataOnLocalStorage() {
 
   showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data));
 
-  newSchedules.localUserPreferences = JSON.parse(
-    localStorage.getItem("schedules")
-  ).localUserPreferences;
+  newSchedules.localUserPreferences = JSON.parse(localStorage.getItem("schedules")).localUserPreferences;
 
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
 
@@ -60,28 +41,17 @@ function saveDataOnLocalStorage() {
 
 function allocateSpaceForSchedulesInLocalStorage() {
   if (!localStorage.getItem("schedules")) {
-    localStorage.setItem(
-      "schedules",
-      '{"data": {}, "localUserPreferences": {}}'
-    );
+    localStorage.setItem("schedules", '{"data": {}, "localUserPreferences": {}}');
   }
   if (!localStorage.getItem("userPreferences")) {
-    localStorage.setItem(
-      "userPreferences",
-      '{"openingTime": "08:00", "closingTime": "18:30", "sessionDuration": 30}'
-    );
+    localStorage.setItem("userPreferences", '{"openingTime": "08:00", "closingTime": "18:30", "sessionDuration": 30}');
   }
 }
 
-function defineIfLocalUserPreferencesWillGetOverwritten(
-  savedSchedules,
-  amountOfFilledSchedules
-) {
+function defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules) {
   // overwrite local user preferences with global user preferences if there are no filled schedules
   if (!amountOfFilledSchedules) {
-    const globalUserPreferences = JSON.parse(
-      localStorage.getItem("userPreferences")
-    );
+    const globalUserPreferences = JSON.parse(localStorage.getItem("userPreferences"));
 
     savedSchedules.localUserPreferences = globalUserPreferences;
     localStorage.setItem("schedules", JSON.stringify(savedSchedules));
@@ -89,9 +59,7 @@ function defineIfLocalUserPreferencesWillGetOverwritten(
 }
 
 function applyUserPreferences() {
-  const userPreferencesSelects = document.querySelectorAll(
-    "[data-js='user-preferences-modal'] select"
-  );
+  const userPreferencesSelects = document.querySelectorAll("[data-js='user-preferences-modal'] select");
   const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
 
   for (const select of userPreferencesSelects) {
@@ -112,19 +80,14 @@ function returnAmountOfFilledSchedules(savedSchedulesData) {
 }
 
 function showAmountOfFilledSchedules(amountOfFilledSchedules) {
-  const amountOfSchedules = document.querySelector(
-    '[data-js="amount-of-schedules"]'
-  );
+  const amountOfSchedules = document.querySelector('[data-js="amount-of-schedules"]');
 
-  amountOfSchedules.textContent =
-    amountOfFilledSchedules + " cliente(s) para hoje";
+  amountOfSchedules.textContent = amountOfFilledSchedules + " cliente(s) para hoje";
 }
 
 function reflectUserPreferencesOnPreferencsForm() {
   const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
-  const userPreferencesSelects = Array.from(
-    document.querySelectorAll("[data-js='user-preferences-modal'] select")
-  );
+  const userPreferencesSelects = Array.from(document.querySelectorAll("[data-js='user-preferences-modal'] select"));
 
   userPreferencesSelects.forEach((select) => {
     select.value = userPreferences[select.name];
@@ -136,14 +99,9 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
   const scheduleTemplate = document.getElementById("schedule");
   const schedules = document.getElementById("schedules");
 
-  const { openingTime, closingTime, sessionDuration } =
-    savedSchedules.localUserPreferences;
-  const currentTime = new ScheduleTime(
-    ...openingTime.split(":").map((n) => Number(n))
-  );
-  const endTime = new ScheduleTime(
-    ...closingTime.split(":").map((n) => Number(n))
-  );
+  const { openingTime, closingTime, sessionDuration } = savedSchedules.localUserPreferences;
+  const currentTime = new ScheduleTime(...openingTime.split(":").map((n) => Number(n)));
+  const endTime = new ScheduleTime(...closingTime.split(":").map((n) => Number(n)));
   const firstBreakTime = { time: new ScheduleTime(12, 0), wasCreated: false };
   const secondBreakTime = { time: new ScheduleTime(16, 0), wasCreated: false };
 
@@ -151,9 +109,7 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
     const schedule = scheduleTemplate.content.cloneNode(true);
     const time = schedule.querySelector('[data-js="time"]');
     const input = schedule.querySelector('[data-js="name-input"]');
-    const deleteCustomerButton = schedule.querySelector(
-      '[data-js="delete-button"]'
-    );
+    const deleteCustomerButton = schedule.querySelector('[data-js="delete-button"]');
 
     time.textContent = currentTime.toString();
     time.setAttribute("datetime", currentTime.toString());
@@ -180,10 +136,7 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
 }
 
 function showBreakTime(currentTime, breakTime, fragment) {
-  if (
-    breakTime.time.isSmallerThanOrEqual(currentTime) &&
-    !breakTime.wasCreated
-  ) {
+  if (breakTime.time.isSmallerThanOrEqual(currentTime) && !breakTime.wasCreated) {
     breakTime.wasCreated = true;
     const breakTimeLi = document.createElement("li");
     const breakTimeText = document.createElement("time");
@@ -207,9 +160,7 @@ function deleteCustomer(event) {
 }
 
 function openUserPreferences() {
-  const userPreferencesModal = document.querySelector(
-    "[data-js='user-preferences-modal']"
-  );
+  const userPreferencesModal = document.querySelector("[data-js='user-preferences-modal']");
   userPreferencesModal.show();
 
   localStorage.setItem("openedUserPreferences", true);
@@ -217,11 +168,8 @@ function openUserPreferences() {
 
 function saveUserPreferences() {
   const newUserPreferences = {};
-  const userPreferencesSelects = Array.from(
-    document.querySelectorAll("[data-js='user-preferences-modal'] select")
-  ).forEach((select) => {
-    newUserPreferences[select.name] =
-      select.name === "sessionDuration" ? Number(select.value) : select.value;
+  const userPreferencesSelects = Array.from(document.querySelectorAll("[data-js='user-preferences-modal'] select")).forEach((select) => {
+    newUserPreferences[select.name] = select.name === "sessionDuration" ? Number(select.value) : select.value;
   });
 
   applyUserPreferencesEffects(newUserPreferences);
@@ -236,8 +184,7 @@ function applyUserPreferencesEffects(newUserPreferences) {
   const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
   if (!filledSchedules) {
-    savedSchedules.localUserPreferences =
-      newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
+    savedSchedules.localUserPreferences = newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
     localStorage.setItem("schedules", JSON.stringify(savedSchedules));
 
     populateAppWithSchedules(savedSchedules, true);
@@ -245,9 +192,7 @@ function applyUserPreferencesEffects(newUserPreferences) {
 }
 
 function deleteSchedules() {
-  const nameInputs = document.querySelectorAll(
-    '[data-js="schedule"] [data-js="name-input"]'
-  );
+  const nameInputs = document.querySelectorAll('[data-js="schedule"] [data-js="name-input"]');
 
   for (const input of nameInputs) {
     input.value = "";
@@ -259,8 +204,7 @@ function deleteSchedules() {
 }
 
 function copyTable() {
-  let outputText =
-    "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
+  let outputText = "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
 
   for (let schedule in savedSchedules) {
@@ -295,7 +239,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === "accepted") {
-        installButton.classList.add("hidden")
+        installButton.classList.add("hidden");
       } else {
         console.log("User dismissed the install prompt");
       }
@@ -304,16 +248,14 @@ window.addEventListener("beforeinstallprompt", (e) => {
   });
 });
 
-function main() {
+async function main() {
+  await validateUser();
+
   allocateSpaceForSchedulesInLocalStorage();
 
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
-  const openedUserPreferencesOnce = localStorage.getItem(
-    "openedUserPreferences"
-  );
-  const amountOfFilledSchedules = returnAmountOfFilledSchedules(
-    savedSchedules.data
-  );
+  const openedUserPreferencesOnce = localStorage.getItem("openedUserPreferences");
+  const amountOfFilledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
   if (!openedUserPreferencesOnce) {
     openUserPreferences();
@@ -335,6 +277,4 @@ userPreferencesButton.addEventListener("click", openUserPreferences);
 saveUserPreferencesButton.addEventListener("click", saveUserPreferences);
 deleteSchedulesButton.addEventListener("click", deleteSchedules);
 copyTableButton.addEventListener("click", copyTable);
-modalCloseButtons.forEach((button) =>
-  button.addEventListener("click", closeAssociatedModal)
-);
+modalCloseButtons.forEach((button) => button.addEventListener("click", closeAssociatedModal));
