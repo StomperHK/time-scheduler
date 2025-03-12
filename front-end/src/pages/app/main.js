@@ -1,7 +1,8 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
-import "../../style.css";
+import logo from "../../assets/logo.png"
+import "../../style.css"
 
 const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
 const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
@@ -11,6 +12,8 @@ const modalCloseButtons = Array.from(document.querySelectorAll("[data-js='close-
 const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1500);
+
+document.querySelector('[data-js="logo"]').src = logo
 
 function debounce(fn, delay) {
   let timeout;
@@ -36,7 +39,7 @@ function saveDataOnLocalStorage() {
 
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
 
-  createToaster("Dados Salvos");
+  createToaster("Dados salvos");
 }
 
 function allocateSpaceForSchedulesInLocalStorage() {
@@ -176,7 +179,7 @@ function saveUserPreferences() {
 
   localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
 
-  createToaster("Preferências Salvos");
+  createToaster("Preferências salvas");
 }
 
 function applyUserPreferencesEffects(newUserPreferences) {
@@ -214,7 +217,7 @@ function copyTable() {
   navigator.clipboard
     .writeText(outputText)
     .then(() => {
-      createToaster("Tabela copiada com sucesso!");
+      createToaster("Tabela copiada com sucesso");
     })
     .catch(() => {
       createToaster("Erro ao copiar a tabela", "error");

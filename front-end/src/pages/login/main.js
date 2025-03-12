@@ -1,9 +1,13 @@
 import { validateUser } from "../../api/validateUser";
 import { createToaster } from "../../utils/createToaster";
-import "../../style.css";
+import logo from "../../assets/logo.png"
+import "../../style.css"
+
 
 const loginForm = document.querySelector('[data-js="login-form"]');
 const submitButton = document.querySelector('[type="submit"')
+
+document.querySelector('[data-js="logo"]').src = logo
 
 validateUser()
 .then((userIsValid) => {
