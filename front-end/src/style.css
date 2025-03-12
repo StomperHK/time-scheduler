@@ -5,7 +5,8 @@
 }
 
 @theme {
-  
+  --breakpoint-sm-2: 360px;
+  --breakpoint-sm-1: 480px;
 }
 
 @utility text-shadow-none {
@@ -39,7 +40,7 @@
 
 @layer components {
   .btn {
-    @apply min-w-12 h-12 p-2 px-4 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-500;
+    @apply min-w-12 h-12 p-2 px-4 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-700;
   }
 
   .btn-text {
@@ -47,7 +48,7 @@
   }
 
   .btn-red {
-    @apply bg-red-600 active:bg-red-500;
+    @apply bg-red-600 active:bg-red-700;
   }
 
   .btn-sm {
