@@ -18,5 +18,5 @@ export default defineConfig({
       }
     })
   ],
-  root: "src/pages",
+  root: "src/pages"
 })
