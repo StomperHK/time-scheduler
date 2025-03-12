@@ -51,6 +51,10 @@ async function createAccount(event) {
       toasterMessage = "Senha muito curta";
     }
 
+    if (message === "invalid email") {
+      toasterMessage = "E-mail inválido"
+    }
+
     if (message === "email registered") {
       toasterMessage = "E-mail já registrado";
     }

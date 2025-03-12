@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import bcrypt from "bcrypt";
 import { sql } from "./lib/databaseConnection.js";
 
+import { isEmailFormatValid, resolveMxPromise } from "./lib/emailValidation.js";
 import { User } from "./models/User.js";
 import { checkToken } from "./middlewares/checkToken.js";
 
@@ -25,6 +26,9 @@ app.post("/auth/register", async (req, res) => {
   }
   if (password.length < 8) {
     return res.status(422).json({ message: "short password" });
+  }
+  if (!isEmailFormatValid(email) || (await resolveMxPromise(email)).status === "invalid hostname") {
+    return res.status(422).json({message: "invalid email"})
   }
 
   password = await bcrypt.hash(password, 10);
