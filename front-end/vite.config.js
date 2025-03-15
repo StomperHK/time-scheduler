@@ -21,6 +21,7 @@ export default defineConfig({
     }),
   ],
   root: "src/pages",
+  envDir: "../../",
   build: {
     rollupOptions: {
       input: {
@@ -30,6 +31,6 @@ export default defineConfig({
         app: resolve(__dirname, "src/pages/app/index.html"),
       }
     },
-    outDir: "../../dist"
+    outDir: "../../dist",
   }
 });
