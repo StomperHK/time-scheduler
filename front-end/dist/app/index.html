@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://kit.fontawesome.com/5b3bf62810.js" crossorigin="anonymous"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <title>Gerenciador de Horários</title>
+    <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento.">
+
+    <template id="schedule">
+      <li data-js="schedule" class="flex items-center gap-4 relative">
+        <time data-js="time" class="text-xl font-bold text-zinc-700 sm:text-2xl">00:00</time>
+        <input data-js="name-input" type="text" maxlength="30" class="w-full p-2 border-2 rounded-sm border-blue-500 outline-0 focus:border-blue-700" placeholder="nome do cliente" />
+        <div class="group">
+          <button data-js="button" title="mais opções" class="btn btn-sm w-4"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          <ul data-js="schedule-menu" class="absolute top-1 right-0 z-10 bg-zinc-100 shadow-xl border-2 border-blue-600 rounded-md p-2 hidden group-focus-within:block">
+            <li><button data-js="delete-button" class="btn btn-text">apagar <i class="fa-solid fa-trash"></i></button></li>
+          </ul>
+        </div>
+      </li>
+    </template>
+    <script type="module" crossorigin src="/assets/app-CFML5RYP.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/style-DMd9yYrQ.js">
+    <link rel="modulepreload" crossorigin href="/assets/createToaster-C2rzx3Hn.js">
+    <link rel="stylesheet" crossorigin href="/assets/style-ME5Wz07j.css">
+    <link rel="stylesheet" crossorigin href="/assets/createToaster-BKzYhvbD.css">
+  <script id="vite-plugin-pwa:inline-sw">if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/src/pagessw.js', { scope: '/src/pages' })})}</script></head>
+
+  <body class="bg-zinc-200">
+    <header class="flex items-center justify-between p-6 lg:px-8">
+      <a href="/" class="-m-1.5 p-1.5">
+        <span class="sr-only">Your Company</span>
+        <img data-js="logo" class="h-12 w-auto rounded-md" alt="logo" />
+      </a>
+
+      <div>
+        <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
+        <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
+      </div>
+    </header>
+
+    <main class="w-[90%] max-w-3xl m-auto mb-12">
+      <h1 class="mb-10 text-center text-4xl font-bold">Horários</h1>
+
+      <div class="bg-zinc-100/60 border-2 border-blue-600 shadow-xl rounded-md">
+        <div class="mb-8 p-4 py-10 bg-blue-600 text-white [background-image:url('/layered-peaks.svg')] [background-position:bottom_right] bg-cover">
+          <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
+        </div>
+        <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
+          <button data-js="delete-schedules" class="btn btn-text btn-red max-sm-1:h-14">apagar tudo <i class="fa-solid fa-trash"></i></span></button>
+          <button data-js="copy-table" class="btn btn-text max-sm-1:h-14">copiar tabela <i class="fa-solid fa-copy"></i></button>
+        </div>
+
+        <ol id="schedules" class="p-4 [&>*+*]:mt-4">
+        </ol>
+      </div>
+    </main>
+
+    <dialog data-js="user-preferences-modal" class="modal">
+      <div>
+        <div class="modal-header">
+          <h2 class="text-xl font-bold">Preferências</h2>
+          <button data-js="close-button" class="btn btn-sm"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <form>
+          <div class="flex justify-between mb-2">
+            <label for="openingTime">Horário de abertura</label>
+            <select name="openingTime" id="openingTime" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+              <option value="06:00">06:00</option>
+              <option value="06:30">06:30</option>
+              <option value="07:00">07:00</option>
+              <option value="07:30">07:30</option>
+              <option value="08:00" selected>08:00</option>
+              <option value="08:30">08:30</option>
+              <option value="09:00">09:00</option>
+              <option value="09:30">09:30</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="11:30">11:30</option>
+              <option value="12:00">11:30</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between mb-2">
+            <label for="closingTime">Horário de fechamento</label>
+            <select name="closingTime" id="closingTime" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+              <option value="13:00">13:00</option>
+              <option value="13:30">13:30</option>
+              <option value="14:00">14:00</option>
+              <option value="14:30">14:30</option>
+              <option value="15:00">15:00</option>
+              <option value="15:30">15:30</option>
+              <option value="16:00">16:00</option>
+              <option value="16:30">16:30</option>
+              <option value="17:00">17:00</option>
+              <option value="17:30">17:30</option>
+              <option value="18:00">18:00</option>
+              <option value="18:30" selected>18:30</option>
+              <option value="19:00">19:00</option>
+              <option value="19:30">19:30</option>
+              <option value="20:00">20:00</option>
+              <option value="20:30">20:30</option>
+              <option value="21:00">21:00</option>
+              <option value="21:30">21:30</option>
+              <option value="22:00">22:00</option>
+              <option value="22:30">22:30</option>
+              <option value="23:00">23:00</option>
+              <option value="23:30">23:30</option>
+              <option value="00:00">00:00</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between mb-4">
+            <label for="sessionDuration">Duração da sessão</label>
+            <select name="sessionDuration" id="sessionDuration" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+              <option value="15">15 minutos</option>
+              <option value="20">20 minutos</option>
+              <option value="25">25 minutos</option>
+              <option value="30" selected>30 minutos</option>
+              <option value="45">45 minutos</option>
+              <option value="60">60 minutos</option>
+            </select>
+          </div>
+
+          <p class="mb-4">As preferências serão aplicadas quando você apagar todos seus agendamentos.</p>
+
+          <div class="flex justify-end">
+            <button data-js="save-button" type="button" class="btn btn-text">salvar <i class="fa-solid fa-floppy-disk"></i></button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+  </body>
+</html>

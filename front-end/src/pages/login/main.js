@@ -1,7 +1,7 @@
 import { validateUser } from "../../api/validateUser";
 import { createToaster } from "../../utils/createToaster";
-import logo from "../../assets/logo.png"
-import "../../style.css"
+import logo from "/assets/logo.png"
+import "/assets/style.css"
 
 
 const loginForm = document.querySelector('[data-js="login-form"]');

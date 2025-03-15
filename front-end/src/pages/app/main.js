@@ -1,8 +1,8 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
-import logo from "../../assets/logo.png"
-import "../../style.css"
+import logo from "/assets/logo.png"
+import "/assets/style.css"
 
 const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
 const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
