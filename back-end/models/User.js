@@ -16,17 +16,26 @@ export class User {
     return user !== undefined
   }
 
-  async createAccount(email, hashedPassword) {
+  async createAccountWithEmailPassword(email, hashedPassword, name) {
     if (!(await this.accountExists(email))) {
       const id = randomUUID()
 
       await this.#sql`
-        INSERT INTO Users (id, email, password, created_at)
-        VALUES (${id}, ${email}, ${hashedPassword}, ${new Date()})
+        INSERT INTO Users (id, email, password, name, created_at, login_type)
+        VALUES (${id}, ${email}, ${hashedPassword}, ${name}, ${new Date()}, 'email/password')
       `
 
       return id
     }
+  }
+
+  async createAccountWithGoogle(email, name, picture) {
+    const id = randomUUID()
+
+    await this.#sql`
+      INSERT INTO Users (id, email, name, picture, created_at, login_type)
+      VALUES (${id}, ${email}, ${name}, ${picture}, ${new Date()}, 'oauth')
+    `
   }
 
   async login(email, password) {
@@ -42,10 +51,10 @@ export class User {
   }
 
   async getUserData(userId) {
-    const user = (await this.#sql`
+    const {name, picture, is_premium, created_at} = (await this.#sql`
       SELECT * FROM Users where id = ${userId}
     `)[0]
 
-    return user
+    return {name, picture, is_premium, created_at}
   }
 }

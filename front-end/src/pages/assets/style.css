@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  
+  --header-height: 92px;
 }
 
 @theme {
@@ -40,7 +40,7 @@
 
 @layer components {
   .btn {
-    @apply min-w-12 h-12 p-2 px-4 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-700;
+    @apply min-w-10 h-10 p-2 px-3 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-700;
   }
 
   .btn-text {

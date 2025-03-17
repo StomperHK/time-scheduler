@@ -30,15 +30,17 @@
   </head>
 
   <body class="bg-zinc-200">
-    <header class="flex items-center justify-between p-6 lg:px-8">
-      <a href="/" class="-m-1.5 p-1.5">
-        <span class="sr-only">Your Company</span>
-        <img data-js="logo" class="h-12 w-auto rounded-md" alt="logo" />
-      </a>
+    <header class="p-6 lg:px-8">
+      <div data-js="user-data" class="flex items-center justify-end gap-3 mb-4"></div>
 
-      <div>
-        <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
-        <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
+      <div class="flex items-center justify-between">
+        <a href="/" class="-m-1.5 p-1.5">
+          <img data-js="logo" class="h-11 w-auto rounded-md" alt="logo" />
+        </a>
+        <div class="flex gap-3 items-center">
+          <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
+          <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
+        </div>
       </div>
     </header>
 
@@ -50,8 +52,8 @@
           <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
         </div>
         <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
-          <button data-js="delete-schedules" class="btn btn-text btn-red max-sm-1:h-14">apagar tudo <i class="fa-solid fa-trash"></i></span></button>
-          <button data-js="copy-table" class="btn btn-text max-sm-1:h-14">copiar tabela <i class="fa-solid fa-copy"></i></button>
+          <button data-js="delete-schedules" class="btn btn-text btn-red">resetar <i class="fa-solid fa-trash"></i></span></button>
+          <button data-js="copy-table" class="btn btn-text">copiar tabela <i class="fa-solid fa-copy"></i></button>
         </div>
 
         <ol id="schedules" class="p-4 [&>*+*]:mt-4">

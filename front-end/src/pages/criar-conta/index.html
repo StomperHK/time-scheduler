@@ -14,31 +14,63 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <title>Gerenciador de Horários</title>
     <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento.">
+    <script src="https://accounts.google.com/gsi/client" async></script>
   </head>
 
   <body class="bg-zinc-100">
-    <header class="absolute inset-x-0 top-0 z-50">
+    <header>
       <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
         <a href="/" class="-m-1.5 p-1.5">
-          <span class="sr-only">Your Company</span>
           <img data-js="logo" class="h-11 w-auto rounded-md" alt="logo" />
         </a>
       </nav>
     </header>
 
-    <div class="flex justify-center items-center max-w-[500px] m-auto min-h-[100svh] p-6">
-      <form data-js="create-account-form" method="post" class="bg-white shadow-lg rounded-md p-4 w-full">
+    <div class="flex justify-center items-center max-w-[500px] m-auto min-h-[calc(100svh_-_var(--header-height))] p-6">
+      <form data-js="create-account-form" method="post" class="bg-white shadow-lg rounded-md p-4 w-full border-2 border-blue-500">
         <h1 class="mb-6 text-center">Criar Conta</h1>
+
+        <div id="google-login-button" aria-label="fazer login com google" type="button" class="w-full font-bold [&_[role='button']]:!border-2 [&_[role='button']]:!border-blue-500"></div>
+
+        <div class="my-4 text-center relative before:block before:border-1 before:border-gray-300 before:absolute before:top-1/2 before:w-full">
+          <span class="bg-white relative z-10 px-2">ou use seu e-mail</span>
+        </div>
 
         <div class="space-y-6">
           <div>
+            <div class="flex gap-2 flex-col md:flex-row">
+              <div class="mb-4">
+                <div>
+                  <div class="sm:col-span-4">
+                    <label for="firstname" class="block text-sm/6 font-medium text-gray-900">Nome</label>
+                    <div class="mt-2">
+                      <div class="flex items-center rounded-sm bg-white pl-3 outline-2 -outline-offset-1 outline-gray-300 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <input type="firstname" required name="firstname" id="firstname" minlength="4" maxlength="10" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="João">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <div>
+                  <div class="sm:col-span-4">
+                    <label for="lastname" class="block text-sm/6 font-medium text-gray-900">Último nome</label>
+                    <div class="mt-2">
+                      <div class="flex items-center rounded-sm bg-white pl-3 outline-2 -outline-offset-1 outline-gray-300 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <input type="lastname" required name="lastname" id="lastname" minlength="4" maxlength="16" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Pereira">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="mb-4">
               <div>
                 <div class="sm:col-span-4">
                   <label for="email" class="block text-sm/6 font-medium text-gray-900">Email</label>
                   <div class="mt-2">
                     <div class="flex items-center rounded-sm bg-white pl-3 outline-2 -outline-offset-1 outline-gray-300 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                      <input type="email" name="email" id="email" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="email@gmail.com">
+                      <input type="email" required name="email" id="email" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="email@gmail.com">
                     </div>
                   </div>
                 </div>
@@ -48,7 +80,7 @@
               <label for="password" class="block text-sm/6 font-medium text-gray-900">Senha</label>
               <div class="mt-2">
                 <div class="flex items-center rounded-sm bg-white pl-3 outline-2 -outline-offset-1 outline-gray-300  focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                  <input type="password" minlength="8" name="password" id="password" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="sua senha">
+                  <input type="password" required minlength="8" name="password" id="password" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="sua senha">
                 </div>
               </div>
             </div>

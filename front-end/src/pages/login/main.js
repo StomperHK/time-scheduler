@@ -56,16 +56,16 @@ async function login(event) {
     }
 
     createToaster(toasterMessage, "error");
-  } else {
-    const { token } = await response.json();
-    createToaster("Login efetuado com sucesso");
-
-    localStorage.setItem("token", token);
-
-    setTimeout(() => {
-      window.location.href = "/app/";
-    }, 2000);
   }
+
+  const token = await response.json();
+  createToaster("Login efetuado com sucesso");
+
+  localStorage.setItem("token", JSON.stringify(token));
+
+  setTimeout(() => {
+    window.location.href = "/app/";
+  }, 2000);
 }
 
 function disableButton() {
@@ -86,4 +86,43 @@ function enableButton() {
 
   spinner.classList.add("hidden")
   buttonText.classList.remove("opacity-0")
+}
+
+async function handleCredentialResponse(response) {
+  const apiResponse = await fetch(import.meta.env.VITE_API_URL + "/auth/oauth-register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(response)
+  })
+
+
+  if (!apiResponse.ok) {
+    createToaster("Erro no banco de dados", "error")
+    return
+  }
+
+  const token = await apiResponse.json();
+  createToaster("Login efetuado com sucesso");
+
+  localStorage.setItem("token", JSON.stringify(token));
+
+  setTimeout(() => {
+    window.location.href = "/app/";
+  }, 2000);
+}
+
+window.onload = function () {
+  google.accounts.id.initialize({
+    client_id: "300608833225-6onv3a86efidv43u2lga3f3l7grsgm90.apps.googleusercontent.com",
+    callback: handleCredentialResponse
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById("google-login-button"),
+    { theme: "outline", size: "large" }
+  );
+
+  google.accounts.id.prompt();
 }

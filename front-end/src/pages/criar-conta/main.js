@@ -25,6 +25,7 @@ async function createAccount(event) {
   const registerData = JSON.stringify({
     email: formData.get("email"),
     password: formData.get("password"),
+    name: `${capitalize(formData.get("firstname"))} ${capitalize(formData.get("lastname"))}`
   });
 
   disableButton()
@@ -44,7 +45,7 @@ async function createAccount(event) {
     let toasterMessage = "";
 
     if (message === "missing fields") {
-      toasterMessage = "Digite e-mail e senha";
+      toasterMessage = "Digite nome, e-mail e senha";
     }
 
     if (message === "short password") {
@@ -64,16 +65,17 @@ async function createAccount(event) {
     }
 
     createToaster(toasterMessage, "error");
-  } else {
-    const { token } = await response.json();
-    createToaster("Login efetuado com sucesso");
-
-    localStorage.setItem("token", token);
-
-    setTimeout(() => {
-      window.location.href = "/app/";
-    }, 2000);
+    return
   }
+
+  const token = await response.json();
+  createToaster("Login efetuado com sucesso");
+
+  localStorage.setItem("token", JSON.stringify(token));
+
+  setTimeout(() => {
+    window.location.href = "/app/";
+  }, 2000);
 }
 
 function disableButton() {
@@ -94,4 +96,46 @@ function enableButton() {
 
   spinner.classList.add("hidden")
   buttonText.classList.remove("opacity-0")
+}
+
+async function handleCredentialResponse(response) {
+  const apiResponse = await fetch(import.meta.env.VITE_API_URL + "/auth/oauth-register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(response)
+  })
+
+  if (!response.ok) {
+    createToaster("Erro no banco de dados", "error")
+    return
+  }
+
+  const token = await apiResponse.json();
+  createToaster("Conta criada com sucesso");
+
+  localStorage.setItem("token", JSON.stringify(token));
+
+  setTimeout(() => {
+    window.location.href = "/app/";
+  }, 2000);
+}
+
+window.onload = function () {
+  google.accounts.id.initialize({
+    client_id: "300608833225-6onv3a86efidv43u2lga3f3l7grsgm90.apps.googleusercontent.com",
+    callback: handleCredentialResponse
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById("google-login-button"),
+    { theme: "outline", size: "large" }
+  );
+
+  google.accounts.id.prompt();
+}
+
+function capitalize(str)  {
+  return str[0].toUpperCase() + str.slice(1, str.length)
 }

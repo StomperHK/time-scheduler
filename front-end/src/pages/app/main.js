@@ -24,6 +24,37 @@ function debounce(fn, delay) {
   };
 }
 
+function showUserData(name, picture) {
+  const userDataPlaceholder = document.querySelector('[data-js="user-data"]')
+  const userInfoHtml = `
+    <p>${name}</p>
+    ${
+      picture ?
+      `<img src="${picture}" alt="${name} foto" />` :
+      `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
+    }
+  `
+
+  userDataPlaceholder.innerHTML = userInfoHtml
+}
+
+function getInittials(name) {
+  const separatedName = name.split(" ")
+  return separatedName[0][0] + separatedName[1][0]
+}
+
+function parseUserData({name, picture, created_at, is_premium}) {
+  const accountAge = Date.now() - (new Date(created_at)).valueOf()
+  const oneWeekInMs = 1000 * 60 * 60 * 24 * 7
+
+  if (accountAge > oneWeekInMs && !is_premium) {
+    location.href = "/premium/"
+    return
+  }
+
+  showUserData(name, picture)
+}
+
 function saveDataOnLocalStorage() {
   // debounce save data on local storage
   const nameInputs = document.querySelectorAll('[data-js="schedule"] [data-js="name-input"]');
@@ -252,12 +283,13 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  const userIsValid = await validateUser()
+  const userData = await validateUser(true)
 
-  if (!userIsValid) {
+  if (!userData) {
     window.location.href = "/criar-conta/"
   }
 
+  parseUserData(userData)
   allocateSpaceForSchedulesInLocalStorage();
 
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
