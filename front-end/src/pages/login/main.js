@@ -47,6 +47,10 @@ async function login(event) {
       toasterMessage = "Digite e-mail e senha";
     }
 
+    if (message === "account created with oauth") [
+      toasterMessage = "Faça login via Google"
+    ]
+
     if (message === "wrong login") {
       toasterMessage = "Dados de login incorretos";
     }
@@ -104,6 +108,7 @@ async function handleCredentialResponse(response) {
   }
 
   const token = await apiResponse.json();
+  
   createToaster("Login efetuado com sucesso");
 
   localStorage.setItem("token", JSON.stringify(token));

@@ -36,6 +36,8 @@ export class User {
       INSERT INTO Users (id, email, name, picture, created_at, login_type)
       VALUES (${id}, ${email}, ${name}, ${picture}, ${new Date()}, 'oauth')
     `
+
+    return id
   }
 
   async login(email, password) {
@@ -45,8 +47,12 @@ export class User {
     
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
-        return user.id
+        return {userId: user.id}
       }
+
+      if (user.login_type === "oauth") return {message: "account created with oauth"}
+
+      return {message: "wrong login"}
     }
   }
 
@@ -56,5 +62,13 @@ export class User {
     `)[0]
 
     return {name, picture, is_premium, created_at}
+  }
+
+  async getUserIdWithEmail(email) {
+    const user = (await this.#sql`
+      SELECT * FROM Users WHERE email = ${email}
+    `)[0]
+
+    return user?.id
   }
 }

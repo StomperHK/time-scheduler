@@ -27,10 +27,10 @@ function debounce(fn, delay) {
 function showUserData(name, picture) {
   const userDataPlaceholder = document.querySelector('[data-js="user-data"]')
   const userInfoHtml = `
-    <p>${name}</p>
+    <p class="font-semibold">${name}</p>
     ${
       picture ?
-      `<img src="${picture}" alt="${name} foto" />` :
+      `<img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full" />` :
       `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
     }
   `
@@ -286,7 +286,8 @@ async function main() {
   const userData = await validateUser(true)
 
   if (!userData) {
-    window.location.href = "/criar-conta/"
+    localStorage.removeItem("token")
+    window.location.href = "/login/"
   }
 
   parseUserData(userData)

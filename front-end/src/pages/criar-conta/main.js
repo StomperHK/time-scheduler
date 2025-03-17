@@ -107,7 +107,7 @@ async function handleCredentialResponse(response) {
     body: JSON.stringify(response)
   })
 
-  if (!response.ok) {
+  if (!apiResponse.ok) {
     createToaster("Erro no banco de dados", "error")
     return
   }

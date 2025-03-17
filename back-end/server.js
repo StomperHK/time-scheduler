@@ -29,7 +29,7 @@ app.post("/auth/register", async (req, res) => {
     return res.status(422).json({ message: "short password" });
   }
   if (!isEmailFormatValid(email) || (await resolveMxPromise(email)).status === "invalid hostname") {
-    return res.status(422).json({message: "invalid email"});
+    return res.status(422).json({ message: "invalid email" });
   }
 
   if (name.length > 27) {
@@ -44,12 +44,12 @@ app.post("/auth/register", async (req, res) => {
     if (userId) {
       const secret = process.env.SECRET;
       const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
-      return res.status(200).json({token, type: "email/password"});
+      return res.status(200).json({ token, type: "email/password" });
     }
 
     return res.status(422).json({ message: "email registered" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ message: "server error" });
   }
 });
@@ -63,15 +63,21 @@ app.post("/auth/login", async (req, res) => {
   }
 
   try {
-    const userId = await userModel.login(email, password);
-    
-    if (userId) {
+    const result = await userModel.login(email, password);
+
+    if (result.userId) {
       const secret = process.env.SECRET;
-      const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
-      return res.status(200).json({token, type: "email/password"});
+      const token = jwt.sign({ userId: result.userId }, secret, { expiresIn: "7d" });
+      return res.status(200).json({ token, type: "email/password" });
     }
 
-    res.status(404).json({ message: "wrong login" });
+    if (result.message === "account created with oauth") {
+      return res.status(422).json({ message: result.message});
+    }
+
+    if (result.message === "wrong login") {
+      return res.status(404).json({ message: "wrong login" });
+    }
   } catch (error) {
     return res.status(500).json({ message: "server error" });
   }
@@ -79,43 +85,52 @@ app.post("/auth/login", async (req, res) => {
 
 app.post("/auth/oauth-register", async (req, res) => {
   try {
-    const oAuthCredentials = req.body
+    const oAuthCredentials = req.body;
     const ticket = await oAuthClient.verifyIdToken({
       idToken: oAuthCredentials.credential,
-      audience: process.env.GOOGLE_CLIENT_ID
-    })
-    const {email, given_name, picture} = ticket.getPayload()
-    const userModel = new User(sql)
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const { email, given_name, picture } = ticket.getPayload();
+    const userModel = new User(sql);
+    const secret = process.env.SECRET;
+    var userId = null;
 
-    if (await userModel.accountExists(email)) {
-      res.status(200).json({token: oAuthCredentials.credential, type: "oauth"})
-      return
+    try {
+      userId = await userModel.getUserIdWithEmail(email);
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({ message: "server error" });
     }
-    else {
+
+    if (userId) {
+      const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
+
+      return res.status(200).json({ token, type: "oauth" });
+    } else {
       try {
-        await userModel.createAccountWithGoogle(email, given_name, picture)
-        res.status(201).json({token: oAuthCredentials.credential, type: "oauth"})
-      }
-      catch (error) {
+        const userId = await userModel.createAccountWithGoogle(email, given_name, picture);
+        const token = jwt.sign({ userId }, secret, { expiresIn: "7d" });
+
+        res.status(201).json({ token, type: "oauth" });
+      } catch (error) {
         res.status(500).json({ message: "server error" });
       }
     }
+  } catch (error) {
+    console.log(error)
+    res.status(404).send();
   }
-  catch(error) {
-    res.status(404).send()
-  }
-})
+});
 
 app.get("/user", checkToken, async (req, res) => {
-  const userId = req.authorization
+  const userId = req.authorization;
   const userModel = new User(sql);
-  const sendUserData = req.query["send-user-data"] === "true"
+  const sendUserData = req.query["send-user-data"] === "true";
 
   if (sendUserData) {
-    res.status(200).json(await userModel.getUserData(userId))
-  }
-  else {
-    res.status(204).send()
+    res.status(200).json(await userModel.getUserData(userId));
+  } else {
+    res.status(204).send();
   }
 });
 
