@@ -5,6 +5,7 @@ import "/assets/style.css"
 
 
 const loginForm = document.querySelector('[data-js="login-form"]');
+const showPassword = document.querySelector('[data-js="show-password"]')
 const submitButton = document.querySelector('[type="submit"')
 
 document.querySelector('[data-js="logo"]').src = logo
@@ -131,3 +132,23 @@ window.onload = function () {
 
   google.accounts.id.prompt();
 }
+
+function toggleShowPassword() {
+  const passwordInput = document.querySelector('[data-js="password"]');
+  const isPasswordVisible = passwordInput.type === "text";
+  const icon = showPassword.querySelector("i");
+  
+  if (isPasswordVisible) {
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  } else {
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  }
+
+  passwordInput.type = isPasswordVisible ? "password" : "text";
+  passwordInput.focus()
+  showPassword.setAttribute("aria-checked", !isPasswordVisible);
+}
+
+showPassword.addEventListener("click", toggleShowPassword)

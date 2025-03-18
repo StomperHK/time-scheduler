@@ -79,8 +79,11 @@
             <div class="sm:col-span-4">
               <label for="password" class="block text-sm/6 font-medium text-gray-900">Senha</label>
               <div class="mt-2">
-                <div class="flex items-center rounded-sm bg-white pl-3 outline-2 -outline-offset-1 outline-gray-300  focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                  <input type="password" required minlength="8" name="password" id="password" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="sua senha">
+                <div class="flex items-center rounded-sm bg-white relative pl-3 outline-2 -outline-offset-1 outline-gray-300  focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                  <input data-js="password" type="password" required minlength="8" name="password" id="password" class="block min-w-0 grow py-2 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="sua senha">
+                  <button data-js="show-password" type="button" aria-checked="false" aria-label="mostrar senha" class="absolute bg-white right-4">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
                 </div>
               </div>
             </div>
