@@ -29,6 +29,7 @@ export default defineConfig({
         criarConta: resolve(__dirname, 'src/pages/criar-conta/index.html'),
         login: resolve(__dirname, "src/pages/login/index.html"),
         app: resolve(__dirname, "src/pages/app/index.html"),
+        premium: resolve(__dirname, "src/pages/premium/index.html")
       }
     },
     outDir: "../../dist",

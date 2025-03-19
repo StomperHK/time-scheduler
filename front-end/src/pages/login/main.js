@@ -20,8 +20,6 @@ async function login(event) {
     password: formData.get("password"),
   });
 
-  console.log(registerData)
-
   disableButton()
 
   const response = await fetch(import.meta.env.VITE_API_URL + "/auth/login", {
