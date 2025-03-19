@@ -1,5 +1,6 @@
 import { validateUser } from "../../api/validateUser";
 import { createToaster } from "../../utils/createToaster";
+import { hideLoadingScreen } from "../../utils/loadingScreen";
 import logo from "/assets/logo.png"
 import "/assets/style.css"
 
@@ -114,6 +115,7 @@ async function handleCredentialResponse(response) {
   }
 
   const token = await apiResponse.json();
+  
   createToaster("Conta criada com sucesso");
 
   localStorage.setItem("token", JSON.stringify(token));
@@ -122,6 +124,20 @@ async function handleCredentialResponse(response) {
     window.location.href = "/app/";
   }, 2000);
 }
+
+async function main() {
+  const userIsValid = await validateUser()
+
+  hideLoadingScreen()
+
+  if (userIsValid) {
+    window.location.href = "/app/";
+  } else {
+    createAccountForm.addEventListener("submit", createAccount);
+  }
+}
+
+main()
 
 window.onload = function () {
   google.accounts.id.initialize({

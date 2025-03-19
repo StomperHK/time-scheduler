@@ -1,5 +1,6 @@
 import { validateUser } from "../../api/validateUser";
 import { createToaster } from "../../utils/createToaster";
+import { hideLoadingScreen } from "../../utils/loadingScreen";
 import logo from "/assets/logo.png"
 import "/assets/style.css"
 
@@ -10,15 +11,6 @@ const submitButton = document.querySelector('[type="submit"')
 
 document.querySelector('[data-js="logo"]').src = logo
 
-validateUser()
-.then((userIsValid) => {
-  if (userIsValid) {
-    window.location.href = "/app/";
-  } else {
-    loginForm.addEventListener("submit", login);
-  }
-});
-
 async function login(event) {
   event.preventDefault();
 
@@ -27,6 +19,8 @@ async function login(event) {
     email: formData.get("email"),
     password: formData.get("password"),
   });
+
+  console.log(registerData)
 
   disableButton()
 
@@ -48,7 +42,7 @@ async function login(event) {
       toasterMessage = "Digite e-mail e senha";
     }
 
-    if (message === "account created with oauth") [
+    if (message === "account type is oauth") [
       toasterMessage = "Faça login via Google"
     ]
 
@@ -61,6 +55,8 @@ async function login(event) {
     }
 
     createToaster(toasterMessage, "error");
+
+    return
   }
 
   const token = await response.json();
@@ -102,7 +98,6 @@ async function handleCredentialResponse(response) {
     body: JSON.stringify(response)
   })
 
-
   if (!apiResponse.ok) {
     createToaster("Erro no banco de dados", "error")
     return
@@ -118,6 +113,20 @@ async function handleCredentialResponse(response) {
     window.location.href = "/app/";
   }, 2000);
 }
+
+async function main() {
+  const userIsValid = await validateUser()
+
+  hideLoadingScreen()
+
+  if (userIsValid) {
+    window.location.href = "/app/";
+  } else {
+    loginForm.addEventListener("submit", login);
+  }
+}
+
+main()
 
 window.onload = function () {
   google.accounts.id.initialize({

@@ -1,8 +1,9 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
-import logo from "/assets/logo.png"
-import "/assets/style.css"
+import { hideLoadingScreen } from "../../utils/loadingScreen";
+import logo from "/assets/logo.png";
+import "/assets/style.css";
 
 const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
 const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
@@ -13,7 +14,7 @@ const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Qu
 
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1500);
 
-document.querySelector('[data-js="logo"]').src = logo
+document.querySelector('[data-js="logo"]').src = logo;
 
 function debounce(fn, delay) {
   let timeout;
@@ -25,34 +26,34 @@ function debounce(fn, delay) {
 }
 
 function showUserData(name, picture) {
-  const userDataPlaceholder = document.querySelector('[data-js="user-data"]')
+  const userDataPlaceholder = document.querySelector('[data-js="user-data"]');
   const userInfoHtml = `
     <p class="font-semibold">${name}</p>
     ${
-      picture ?
-      `<img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full" />` :
-      `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
+      picture
+        ? `<img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full" />`
+        : `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
     }
-  `
+  `;
 
-  userDataPlaceholder.innerHTML = userInfoHtml
+  userDataPlaceholder.innerHTML = userInfoHtml;
 }
 
 function getInittials(name) {
-  const separatedName = name.split(" ")
-  return separatedName[0][0] + separatedName[1][0]
+  const separatedName = name.split(" ");
+  return separatedName[0][0] + separatedName[1][0];
 }
 
-function parseUserData({name, picture, created_at, is_premium}) {
-  const accountAge = Date.now() - (new Date(created_at)).valueOf()
-  const oneWeekInMs = 1000 * 60 * 60 * 24 * 7
+function parseUserData({ name, picture, created_at, is_premium }) {
+  const accountAge = Date.now() - new Date(created_at).valueOf();
+  const oneWeekInMs = 1000 * 60 * 60 * 24 * 7;
 
   if (accountAge > oneWeekInMs && !is_premium) {
-    location.href = "/premium/"
-    return
+    location.href = "/premium/";
+    return;
   }
 
-  showUserData(name, picture)
+  showUserData(name, picture);
 }
 
 function saveDataOnLocalStorage() {
@@ -284,9 +285,9 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
 async function main() {
   const userData = await validateUser(true)
-
+  hideLoadingScreen();
+  
   if (!userData) {
-    localStorage.removeItem("token")
     window.location.href = "/login/"
   }
 

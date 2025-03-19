@@ -14,5 +14,6 @@ export async function validateUser(sendUserData) {
     return sendUserData ? await response.json() : true
   }
 
+  localStorage.removeItem("token")
   return false
 }
