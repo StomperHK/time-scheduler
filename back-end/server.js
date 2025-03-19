@@ -71,7 +71,7 @@ app.post("/auth/login", async (req, res) => {
       return res.status(200).json({ token, type: "email/password" });
     }
 
-    if (result.message === "account created with oauth") {
+    if (result.message === "account type is oauth") {
       return res.status(422).json({ message: result.message});
     }
 
@@ -79,6 +79,7 @@ app.post("/auth/login", async (req, res) => {
       return res.status(404).json({ message: "wrong login" });
     }
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: "server error" });
   }
 });
@@ -98,7 +99,7 @@ app.post("/auth/oauth-register", async (req, res) => {
     try {
       userId = await userModel.getUserIdWithEmail(email);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({ message: "server error" });
     }
 

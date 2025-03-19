@@ -46,11 +46,11 @@ export class User {
     `)[0]
     
     if (user) {
-      if (await bcrypt.compare(password, user.password)) {
+      if (user.login_type === "email/password" && await bcrypt.compare(password, user.password)) {
         return {userId: user.id}
       }
 
-      if (user.login_type === "oauth") return {message: "account created with oauth"}
+      if (user.login_type === "oauth") return {message: "account type is oauth"}
 
       return {message: "wrong login"}
     }
