@@ -197,4 +197,6 @@ app.get("/verify-preference", async (req, res) => {
 
 app.post("/mercado-pago-feedback")
 
-app.listen({host: "0.0.0.0", port});
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on port: ${port}`);
+});
