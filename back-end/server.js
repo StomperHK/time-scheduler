@@ -196,4 +196,4 @@ app.get("/verify-preference", async (req, res) => {
 
 app.post("/mercado-pago-feedback")
 
-app.listen(process.env.PORT || 3000);
+app.listen(3000);
