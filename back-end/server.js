@@ -197,4 +197,4 @@ app.get("/verify-preference", async (req, res) => {
 
 app.post("/mercado-pago-feedback")
 
-app.listen(port);
+app.listen({host: "0.0.0.0", port});
