@@ -12,12 +12,13 @@ import { User } from "./models/User.js";
 import { checkToken } from "./middlewares/checkToken.js";
 
 const app = express();
+const port = process.env.PORT || 8080;
 const oAuthClient = new OAuth2Client();
 const mercadoPagoClient = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN});
 const isInProduction = process.env.PRODUCTION !== "false";
 
 config();
-app.use(isInProduction ? cors({ origin: /vercel\.app$/ }) : cors({ origin: "*" }));
+app.use(isInProduction ? cors({ origin: ["https://api.mercadopago.com/", /vercel\.app$/] }) : cors({ origin: "*" }));
 app.use(express.json());
 
 app.post("/auth/register", async (req, res) => {
@@ -196,4 +197,4 @@ app.get("/verify-preference", async (req, res) => {
 
 app.post("/mercado-pago-feedback")
 
-app.listen(3000);
+app.listen(port);
