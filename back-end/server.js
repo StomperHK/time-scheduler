@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import bcrypt from "bcrypt";
 import { sql } from "./lib/databaseConnection.js";
+import { MercadoPagoConfig, Preference } from "mercadopago"
 
 import { isEmailFormatValid, resolveMxPromise } from "./lib/emailValidation.js";
 import { User } from "./models/User.js";
@@ -12,6 +13,7 @@ import { checkToken } from "./middlewares/checkToken.js";
 
 const app = express();
 const oAuthClient = new OAuth2Client();
+const mercadoPagoClient = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN});
 const isInProduction = process.env.PRODUCTION !== "false";
 
 config();
@@ -134,5 +136,64 @@ app.get("/user", checkToken, async (req, res) => {
     res.status(204).send();
   }
 });
+
+app.post("/create-preference", checkToken, async (req, res) => {
+  const newPreference = new Preference(mercadoPagoClient)
+  const userId = req.authorization
+
+  try {
+    const preference = await newPreference.create({
+      body: {
+        items: [
+          {
+            title: 'Agendador de Horários Premium',
+            quantity: 1,
+            unit_price: 29
+          }
+        ],
+        payer: {
+          identification: {
+            type: 'userId',
+            number: String(userId)
+          }
+        }
+      }
+    })
+
+    res.status(201)
+    return res.json({id: preference.id})
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "server error" })
+  }
+})
+
+app.post("/")
+
+app.get("/verify-preference", async (req, res) => {
+  const preferenceId = req.body.preferenceId
+
+  try {
+    const preference = await fetch(`https://api.mercadopago.com/checkout/preferences/${preferenceId}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+      }
+    })
+
+    if (response.ok) {
+      res.status(200)
+      return res.send()
+    }
+
+    res.status(404).send()
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "server error" })
+  }
+})
+
+app.post("/mercado-pago-feedback")
 
 app.listen(process.env.PORT || 3000);

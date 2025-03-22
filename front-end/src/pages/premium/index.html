@@ -14,6 +14,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <title>Gerenciador de Horários</title>
     <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento.">
+
+    <script src="https://sdk.mercadopago.com/js/v2" async></script>
   </head>
   <body class="bg-zinc-100">
     <header>
@@ -30,7 +32,7 @@
           <p class="text-base/7 font-semibold text-indigo-600">PREMIUM</p>
           <h1 class="mt-2 mx-auto text-4xl max-w-xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">Use o aplicativo de forma ilimitada</h1>
         </div>
-        <p class="mx-auto mb-12 mt-6 max-w-2xl text-center text-lg font-medium  text-gray-600 sm:text-xl/8">Pague o valor um única vez, use para sempre.</p>
+        <p class="mx-auto mb-12 mt-6 max-w-2xl text-center text-lg font-medium  text-gray-600 sm:text-xl/8">Pague o valor uma única vez, use para sempre.</p>
       </div>
       
       <div class="mx-auto max-w-96 rounded-md bg-white/60 p-6 ring-1 ring-gray-900/10 sm:p-8 lg:mx-0">
@@ -54,7 +56,7 @@
             Suporte 24 horas
           </li>
         </ul>
-        <a href="#" aria-describedby="tier-hobby" class="mt-8 no-underline block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-indigo-600 ring-1 ring-indigo-200 ring-inset hover:ring-indigo-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:mt-10">Pagar</a>
+        <div id="wallet-container"></div>
       </div>
     </main>
     
