@@ -56,8 +56,6 @@ async function getPreferenceId() {
     if (response.ok) {
       const preferenceData = await response.json()
       localStorage.setItem("preference_id", preferenceData.id)
-      console.log(preferenceData.id)
-
       return preferenceData.id
     }
   }

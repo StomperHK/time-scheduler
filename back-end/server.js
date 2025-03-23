@@ -12,7 +12,7 @@ import { User } from "./models/User.js";
 import { checkToken } from "./middlewares/checkToken.js";
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const oAuthClient = new OAuth2Client();
 const mercadoPagoClient = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN});
 const isInProduction = process.env.PRODUCTION !== "false";
@@ -157,6 +157,11 @@ app.post("/create-preference", checkToken, async (req, res) => {
             type: 'userId',
             number: String(userId)
           }
+        },
+        back_urls: {
+          success: "http://localhost:5173/mercado-pago-feedback",
+          failure: "http://localhost:3000/mercado-pago-feedback",
+          pending: "http://localhost:3000/mercado-pago-feedback"
         }
       }
     })
@@ -169,8 +174,6 @@ app.post("/create-preference", checkToken, async (req, res) => {
     res.status(500).json({ message: "server error" })
   }
 })
-
-app.post("/")
 
 app.get("/verify-preference", async (req, res) => {
   const preferenceId = req.body.preferenceId
@@ -195,7 +198,9 @@ app.get("/verify-preference", async (req, res) => {
   }
 })
 
-app.post("/mercado-pago-feedback")
+app.get("/mercado-pago-feedback", async (req, res) => {
+  console.log(req)
+})
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on port: ${port}`);
