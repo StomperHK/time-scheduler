@@ -2,8 +2,8 @@ import crypto from "node:crypto";
 
 export function verifyWebhookSignature(req, res, next) {
   const dataId = req.query["data.id"];
-  const xRequestId = req.headers["x-request-id"];
-  const xSignature = headers['x-signature']; 
+  const xRequestId = req.get("x-request-id")
+  const xSignature = req.get('x-signature')
   const ts = xSignature.split(",")[0].split("=")[1];
   const hash = xSignature.split(",")[1].split("=")[1];
 

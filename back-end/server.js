@@ -184,7 +184,7 @@ app.post("/create-preference", checkToken, async (req, res) => {
 
 app.post("/mercado-pago-feedback", verifyWebhookSignature, async (req, res) => {
   const { type, data: { id } } = req.body
-
+  req.header
   console.log("event type: ", type)
 
   switch (type) {
