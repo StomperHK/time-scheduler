@@ -14,5 +14,7 @@ export function verifyWebhookSignature(req, res, next) {
     return
   }
 
+  console.log("Unauthorized webhook access.")
+
   res.status(400).send()
 }
