@@ -72,7 +72,7 @@ export class User {
     return user?.id
   }
 
-  async turnUserIntoPremium(userId) {
+  async upgradeUserToPremium(userId) {
     await this.#sql`
       UPDATE Users SET is_premium = true WHERE id = ${userId}
     `

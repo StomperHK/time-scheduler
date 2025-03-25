@@ -185,26 +185,42 @@ app.post("/create-preference", checkToken, async (req, res) => {
 app.post("/mercado-pago-feedback", verifyWebhookSignature, async (req, res) => {
   const { type, data: { id } } = req.body
 
-  try {
-    switch (type) {
-      case "payment":
-        const payment = new Payment(mercadoPagoClient)
-        const paymentData = await payment.get({ id })
-  
-        if (paymentData.status === "approved" || paymentData.date_approved !== null) {
+  switch (type) {
+    case "payment":
+      let payment = null;
+      let paymentData = null
+      
+      try {
+        payment = new Payment(mercadoPagoClient)
+        paymentData = await payment.get({ id })
+      }
+      catch(error) {
+        if (error.error === "not_found") {
+          res.status(404).send()
+          return
+        }
+        else {
+          res.status(500).send()
+          return
+        }
+      }
+
+      if (paymentData.status === "approved" || paymentData.date_approved !== null) {
+        try {
           await handleUserSubscription(sql, paymentData)
           res.status(200).send()
+          return
         }
-  
-        break
+        catch (error) {
+          res.status(500).send()
+          return
+        }
+      }
+
+      break
     default:
       console.log("Not handled request event type: ", type)
-      res.status().send()
-    }
-  }
-  catch (error) {
-    console.log(error)
-    res.status(500).send()
+      res.status(404).send()
   }
 })
 

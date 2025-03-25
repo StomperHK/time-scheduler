@@ -10,14 +10,10 @@ export function verifyWebhookSignature(req, res, next) {
   const signatureTemplate = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
   const cyphedSignature = crypto.createHmac("sha256", process.env.MP_WEBHOOK_SECRET).update(signatureTemplate).digest("hex");
 
-  console.log(`data id: ${dataId}; secret: ${process.env.MP_WEBHOOK_SECRET}`)
-
   if (cyphedSignature === hash) {
     next()
     return
   }
-
-  console.log("Unauthorized webhook access.")
 
   res.status(400).send()
 }
