@@ -159,7 +159,7 @@ app.post("/create-preference", checkToken, async (req, res) => {
           userId,
         },
         payer: {
-          userEmail,
+          email: userEmail,
           identification: {
             type: "userId",
             number: userId
@@ -168,7 +168,7 @@ app.post("/create-preference", checkToken, async (req, res) => {
         back_urls: {
           success: process.env.FRONTEND_URL + "/pagamento-sucesso/",
           failure: process.env.FRONTEND_URL + "/pagamento-erro/",
-          pending: process.env.FRONTEND_URL + "/pagamento-erro/"
+          pending: process.env.FRONTEND_URL + "/pagamento-pendente/"
         }
       }
     })
