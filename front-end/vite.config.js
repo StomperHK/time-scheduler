@@ -29,7 +29,10 @@ export default defineConfig({
         criarConta: resolve(__dirname, 'src/pages/criar-conta/index.html'),
         login: resolve(__dirname, "src/pages/login/index.html"),
         app: resolve(__dirname, "src/pages/app/index.html"),
-        premium: resolve(__dirname, "src/pages/premium/index.html")
+        premium: resolve(__dirname, "src/pages/premium/index.html"),
+        pagamentoSucesso: resolve(__dirname, "src/pages/pagamento-sucesso/index.html"),
+        pagamentoErro: resolve(__dirname, "src/pages/pagamento-erro/index.html"),
+        pagamentoSucesso: resolve(__dirname, "src/pages/pagamento-pendente/index.html"),
       }
     },
     outDir: "../../dist",

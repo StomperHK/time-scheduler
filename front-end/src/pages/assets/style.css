@@ -34,7 +34,7 @@
   }
 
   a {
-    text-decoration: underline;
+    @apply text-blue-400 underline;
   }
 }
 

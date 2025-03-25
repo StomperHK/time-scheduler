@@ -46,9 +46,9 @@ function getInittials(name) {
 
 function parseUserData({ name, picture, created_at, is_premium }) {
   const accountAge = Date.now() - new Date(created_at).valueOf();
-  const oneWeekInMs = 1000 * 60 * 60 * 24 * 7;
+  const twoWeeksInMs = 1000 * 60 * 60 * 24 * 7 * 2;
 
-  if (accountAge > oneWeekInMs && !is_premium) {
+  if (accountAge > twoWeeksInMs && !is_premium) {
     location.href = "/premium/";
     return;
   }

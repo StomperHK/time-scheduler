@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://kit.fontawesome.com/5b3bf62810.js" crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <title>Gerenciador de Horários</title>
+    <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento." />
+  </head>
+
+  <body class="bg-zinc-100">
+    <header>
+      <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <a href="/" class="-m-1.5 p-1.5">
+          <img data-js="logo" class="h-11 w-auto rounded-md" alt="logo" />
+        </a>
+      </nav>
+    </header>
+
+    <main class="flex min-h-[calc(100svh_-_var(--header-height))] items-center justify-center">
+      <div class="text-center">
+        <i class="fa-solid fa-rectangle-xmark mb-4 text-8xl text-red-500 animate-pulse"></i>
+        <h1 class="mb-4">Pagamento Recusado!</h1>
+        <p>Seu pagamento não foi finalizado. <a href="/premium/">tentar denovo</a></p>
+      </div>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
