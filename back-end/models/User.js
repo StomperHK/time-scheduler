@@ -57,11 +57,11 @@ export class User {
   }
 
   async getUserData(userId) {
-    const {name, picture, is_premium, created_at} = (await this.#sql`
+    const {email, name, picture, is_premium, created_at} = (await this.#sql`
       SELECT * FROM Users where id = ${userId}
     `)[0]
 
-    return {name, picture, is_premium, created_at}
+    return {email, name, picture, is_premium, created_at}
   }
 
   async getUserIdWithEmail(email) {
@@ -70,5 +70,11 @@ export class User {
     `)[0]
 
     return user?.id
+  }
+
+  async turnUserIntoPremium(userId) {
+    await this.#sql`
+      UPDATE Users SET is_premium = true WHERE id = ${userId}
+    `
   }
 }

@@ -5,16 +5,18 @@ import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import bcrypt from "bcrypt";
 import { sql } from "./lib/databaseConnection.js";
-import { MercadoPagoConfig, Preference } from "mercadopago"
+import { MercadoPagoConfig, Preference, Payment, IdentificationType } from "mercadopago"
 
 import { isEmailFormatValid, resolveMxPromise } from "./lib/emailValidation.js";
 import { User } from "./models/User.js";
 import { checkToken } from "./middlewares/checkToken.js";
+import { verifyWebhookSignature } from "./middlewares/verifyWebhookSignature.js"
+import { handleUserSubscription } from "./lib/handleUserSubscription.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
 const oAuthClient = new OAuth2Client();
-const mercadoPagoClient = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN});
+const mercadoPagoClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN});
 const isInProduction = process.env.PRODUCTION !== "false";
 
 config();
@@ -143,6 +145,7 @@ app.post("/create-preference", checkToken, async (req, res) => {
   const userId = req.authorization
 
   try {
+    const userEmail = (await (new User(sql)).getUserData(userId)).email
     const preference = await newPreference.create({
       body: {
         items: [
@@ -152,16 +155,20 @@ app.post("/create-preference", checkToken, async (req, res) => {
             unit_price: 29
           }
         ],
+        metadata: {
+          userId,
+        },
         payer: {
+          userEmail,
           identification: {
-            type: 'userId',
-            number: String(userId)
+            type: "userId",
+            number: userId
           }
         },
         back_urls: {
-          success: "http://localhost:5173/mercado-pago-feedback",
-          failure: "http://localhost:3000/mercado-pago-feedback",
-          pending: "http://localhost:3000/mercado-pago-feedback"
+          success: process.env.FRONTEND_URL + "/pagamento-sucesso/",
+          failure: process.env.FRONTEND_URL + "/pagamento-erro/",
+          pending: process.env.FRONTEND_URL + "/pagamento-erro/"
         }
       }
     })
@@ -175,31 +182,29 @@ app.post("/create-preference", checkToken, async (req, res) => {
   }
 })
 
-app.get("/verify-preference", async (req, res) => {
-  const preferenceId = req.body.preferenceId
+app.post("/mercado-pago-feedback", verifyWebhookSignature, async (req, res) => {
+  const { type, data: { id } } = req.body
 
-  try {
-    const preference = await fetch(`https://api.mercadopago.com/checkout/preferences/${preferenceId}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+  switch (type) {
+    case "payment":
+      const payment = new Payment(mercadoPagoClient)
+      const paymentData = await payment.get({ id })
+
+      if (paymentData.status === "approved" || paymentData.date_approved !== null) {
+        try {
+          await handleUserSubscription(sql, paymentData)
+          res.status(200).send()
+        }
+        catch (error) {
+          res.status(500).send()
+        }
       }
-    })
 
-    if (response.ok) {
-      res.status(200)
-      return res.send()
-    }
-
-    res.status(404).send()
+      break
+    default:
+      console.log("Not handled request event type: ", type)
+      res.status().send()
   }
-  catch (error) {
-    console.log(error)
-    res.status(500).json({ message: "server error" })
-  }
-})
-
-app.get("/mercado-pago-feedback", async (req, res) => {
-  console.log(req)
 })
 
 app.listen(port, "0.0.0.0", () => {
