@@ -152,7 +152,7 @@ app.post("/create-preference", checkToken, async (req, res) => {
           {
             title: 'Agendador de Horários Premium',
             quantity: 1,
-            unit_price: 29
+            unit_price: 1
           }
         ],
         metadata: {
