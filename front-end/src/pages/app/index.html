@@ -30,7 +30,7 @@
   </head>
 
   <body class="bg-zinc-200">
-    <header class="p-6 lg:px-8">
+    <header class="p-6 lg:px-8 relative">
       <div data-js="user-data" class="flex items-center justify-end gap-3 mb-4"></div>
 
       <div class="flex items-center justify-between mb-6">
@@ -41,6 +41,11 @@
           <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
           <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
         </div>
+      </div>
+
+      <div data-js="user-modal" class="hidden absolute top-20 right-6 bg-white shadow p-4 rounded-md">
+        <span class="block mb-3 text-end" data-js="user-modal-username"></span>
+        <button data-js="logoff-button" type="button" class="btn btn-text">sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
       </div>
     </header>
 
@@ -61,7 +66,7 @@
       </div>
 
       <div class="flex justify-end md:hidden">
-        <a data-js="get-premium" href="/premium/" class="btn no-underline bg-yellow-500">obter premium <i class="fa-solid fa-crown"></i></a>
+        <a data-js="get-premium" href="/premium/" class="btn btn-text no-underline bg-yellow-500">obter premium <i class="fa-solid fa-crown"></i></a>
       </div>
     </main>
 

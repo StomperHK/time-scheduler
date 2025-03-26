@@ -36,6 +36,12 @@
   a {
     text-decoration: underline;
   }
+
+  @media (pointer: fine) {
+    button {
+      @apply cursor-pointer
+    }
+  }
 }
 
 @layer components {

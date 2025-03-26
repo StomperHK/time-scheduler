@@ -5,6 +5,7 @@ import { hideLoadingScreen } from "../../utils/loadingScreen";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
+const logofgButton = document.querySelector("[data-js='logoff-button']");
 const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
 const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
 const deleteSchedulesButton = document.querySelector("[data-js='delete-schedules']");
@@ -25,28 +26,41 @@ function debounce(fn, delay) {
   };
 }
 
+function logoffAccount() {
+  localStorage.removeItem("token");
+  window.location.href = "/login/";
+}
+
 function showUserData(name, picture, is_premium) {
   const userDataPlaceholder = document.querySelector('[data-js="user-data"]');
+  const premiumLinsk = document.querySelectorAll('[data-js="get-premium"]')
   const userInfoHtml = `
-    <p class="font-semibold">
+    <p class="flex items-center font-semibold">
       ${
         is_premium
           ? '<i class="fa-solid fa-web-awesome mr-2 text-yellow-500 text-xl" title="premium"></i>'
-          : '<a data-js="get-premium" href="/premium/" class="btn mr-4 no-underline bg-yellow-500 hidden md:inline">obter premium <i class="fa-solid fa-crown"></i></a>'
+          : '<a data-js="get-premium" href="/premium/" class="btn btn-text mr-4 no-underline bg-yellow-500 hidden md:inline">obter premium <i class="fa-solid fa-crown"></i></a>'
       } ${name}
     </p>
     ${
       picture
-        ? `<img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full" />`
-        : `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
+        ? `<button onclick="toggleUserModal()"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500" /></button>`
+        : `<button onclick="toggleUserModal()" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</button>`
     }
   `;
 
   if (is_premium) {
-    document.querySelectorAll('[data-js="get-premium"]').forEach(node => node.remove())
+    premiumLinsk.forEach(node => node.remove())
   }
 
+  document.querySelector('[data-js="user-modal-username"]').textContent = name
+
   userDataPlaceholder.innerHTML = userInfoHtml;
+}
+
+function toggleUserModal() {
+  const userModal = document.querySelector('[data-js="user-modal"]');
+  userModal.classList.toggle("hidden");
 }
 
 function getInittials(name) {
@@ -320,10 +334,13 @@ async function main() {
   );
   reflectUserPreferencesOnPreferencsForm();
   populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
+
+  window.toggleUserModal = toggleUserModal;
 }
 
 main();
 
+logofgButton.addEventListener("click", logoffAccount);
 userPreferencesButton.addEventListener("click", openUserPreferences);
 saveUserPreferencesButton.addEventListener("click", saveUserPreferences);
 deleteSchedulesButton.addEventListener("click", deleteSchedules);

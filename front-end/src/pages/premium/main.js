@@ -2,6 +2,7 @@ import { validateUser } from "../../api/validateUser";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
+const logofgButton = document.querySelector("[data-js='logoff-button']");
 document.querySelector('[data-js="logo"]').src = logo;
 
 async function main() {
@@ -22,6 +23,11 @@ async function main() {
 }
 
 main();
+
+function logoffAccount() {
+  localStorage.removeItem("token");
+  window.location.href = "/login/";
+}
 
 async function getPreferenceId() {
   const preferenceId = localStorage.getItem("preference_id")
@@ -84,3 +90,5 @@ function createPreference(preferenceId) {
     }
   });
 }
+
+logofgButton.addEventListener("click", logoffAccount);
