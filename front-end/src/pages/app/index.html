@@ -16,12 +16,12 @@
     <meta name="description" content="Gerenciador de horários para salões de beleza, barbearias e outros serviços de agendamento.">
 
     <template id="schedule">
-      <li data-js="schedule" class="flex items-center gap-4 relative">
-        <time data-js="time" class="text-xl font-bold text-zinc-700 sm:text-2xl">00:00</time>
-        <input data-js="name-input" type="text" maxlength="30" class="w-full p-2 border-2 rounded-sm border-blue-500 outline-0 focus:border-blue-700" placeholder="nome do cliente" />
+      <li data-js="schedule" class="flex items-center gap-3 relative md:gap-4">
+        <time data-js="time" class="text-lg font-bold text-zinc-700 bg-blue sm:text-2xl">00:00</time>
+        <input data-js="name-input" type="text" maxlength="30" class="w-full p-1.5 border-2 rounded-sm border-gray-400 outline-0 focus:border-blue-700 transition-colors [transition-duration:150ms]" placeholder="nome do cliente" />
         <div class="group">
           <button data-js="button" title="mais opções" class="btn btn-sm w-4"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-          <ul data-js="schedule-menu" class="absolute top-1 right-0 z-10 bg-zinc-100 shadow-xl border-2 border-blue-600 rounded-md p-2 hidden group-focus-within:block">
+          <ul data-js="schedule-menu" class="absolute top-1 right-0 z-10 bg-zinc-100 shadow-xl ring-1 ring-gray-900/10 rounded-md p-2 hidden group-focus-within:block">
             <li><button data-js="delete-button" class="btn btn-text">apagar <i class="fa-solid fa-trash"></i></button></li>
           </ul>
         </div>
@@ -31,19 +31,22 @@
 
   <body class="bg-zinc-200">
     <header class="p-6 lg:px-8 relative">
-      <div data-js="user-data" class="flex items-center justify-end gap-3 mb-4"></div>
-
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center justify-between mb-4">
         <a href="/" class="-m-1.5 p-1.5">
           <img data-js="logo" class="h-10 w-auto rounded-md" alt="logo" />
         </a>
+
+        <div data-js="user-data" class="flex items-center justify-end gap-3"></div>
+      </div>
+
+      <div class="flex items-center justify-end mb-6">
         <div class="flex gap-3 items-center">
           <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
           <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
         </div>
       </div>
 
-      <div data-js="user-modal" class="hidden absolute top-20 right-6 bg-white shadow p-4 rounded-md">
+      <div data-js="user-modal" class="hidden absolute top-20 right-6 ring-1 ring-gray-900/10 bg-white p-4 rounded-md shadow-md">
         <span class="block mb-3 text-end" data-js="user-modal-username"></span>
         <button data-js="logoff-button" type="button" class="btn btn-text">sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
       </div>
@@ -52,7 +55,7 @@
     <main class="w-[90%] max-w-3xl m-auto mb-12">
       <h1 class="mb-10 text-center text-4xl font-bold">Horários</h1>
 
-      <div class="bg-zinc-100/60 border-2 border-blue-600 mb-10 shadow-xl rounded-md">
+      <div class="bg-zinc-100/60 ring-2 ring-blue-600/40 mb-10 shadow-xl rounded-md">
         <div class="mb-8 p-4 py-10 bg-blue-600 text-white [background-image:url('/layered-peaks.svg')] [background-position:bottom_right] bg-cover">
           <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
         </div>
@@ -66,7 +69,7 @@
       </div>
 
       <div class="flex justify-end md:hidden">
-        <a data-js="get-premium" href="/premium/" class="btn btn-text no-underline bg-yellow-500">obter premium <i class="fa-solid fa-crown"></i></a>
+        <a data-js="get-premium" href="/premium/" class="btn btn-text no-underline bg-yellow-400 text-black">obter premium <i class="fa-solid fa-crown"></i></a>
       </div>
     </main>
 

@@ -39,7 +39,7 @@ function showUserData(name, picture, is_premium) {
       ${
         is_premium
           ? '<i class="fa-solid fa-web-awesome mr-2 text-yellow-500 text-xl" title="premium"></i>'
-          : '<a data-js="get-premium" href="/premium/" class="btn btn-text mr-4 no-underline bg-yellow-500 hidden md:inline">obter premium <i class="fa-solid fa-crown"></i></a>'
+          : '<a data-js="get-premium" href="/premium/" class="btn btn-text mr-4 no-underline bg-yellow-400 text-black hidden md:inline">obter premium <i class="fa-solid fa-crown"></i></a>'
       } ${name}
     </p>
     ${
