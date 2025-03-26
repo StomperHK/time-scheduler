@@ -30,24 +30,29 @@
   </head>
 
   <body class="bg-zinc-200">
-    <header class="p-6 lg:px-8">
+    <header class="p-6 lg:px-8 relative">
       <div data-js="user-data" class="flex items-center justify-end gap-3 mb-4"></div>
 
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mb-6">
         <a href="/" class="-m-1.5 p-1.5">
-          <img data-js="logo" class="h-11 w-auto rounded-md" alt="logo" />
+          <img data-js="logo" class="h-10 w-auto rounded-md" alt="logo" />
         </a>
         <div class="flex gap-3 items-center">
           <button data-js="install-pwa-button" title="instalar app" class="btn btn-text hidden">instalar app<i class="fa-solid fa-download"></i></button>
           <button data-js="user-preferences-button" title="preferências" class="btn"><i class="fa-solid fa-gear"></i></button>
         </div>
       </div>
+
+      <div data-js="user-modal" class="hidden absolute top-20 right-6 bg-white shadow p-4 rounded-md">
+        <span class="block mb-3 text-end" data-js="user-modal-username"></span>
+        <button data-js="logoff-button" type="button" class="btn btn-text">sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+      </div>
     </header>
 
     <main class="w-[90%] max-w-3xl m-auto mb-12">
       <h1 class="mb-10 text-center text-4xl font-bold">Horários</h1>
 
-      <div class="bg-zinc-100/60 border-2 border-blue-600 shadow-xl rounded-md">
+      <div class="bg-zinc-100/60 border-2 border-blue-600 mb-10 shadow-xl rounded-md">
         <div class="mb-8 p-4 py-10 bg-blue-600 text-white [background-image:url('/layered-peaks.svg')] [background-position:bottom_right] bg-cover">
           <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
         </div>
@@ -58,6 +63,10 @@
 
         <ol id="schedules" class="p-4 [&>*+*]:mt-4">
         </ol>
+      </div>
+
+      <div class="flex justify-end md:hidden">
+        <a data-js="get-premium" href="/premium/" class="btn btn-text no-underline bg-yellow-500">obter premium <i class="fa-solid fa-crown"></i></a>
       </div>
     </main>
 

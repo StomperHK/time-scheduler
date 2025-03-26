@@ -2,13 +2,19 @@ import { validateUser } from "../../api/validateUser";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
+const logofgButton = document.querySelector("[data-js='logoff-button']");
 document.querySelector('[data-js="logo"]').src = logo;
 
 async function main() {
-  const userIsValid = await validateUser();
+  const userData = await validateUser(true);
 
-  if (!userIsValid) {
+  if (!userData) {
     location.href = "/login/";
+    return;
+  }
+
+  if (userData.is_premium) {
+    location.href = "/app/";
     return;
   }
 
@@ -17,6 +23,11 @@ async function main() {
 }
 
 main();
+
+function logoffAccount() {
+  localStorage.removeItem("token");
+  window.location.href = "/login/";
+}
 
 async function getPreferenceId() {
   const token = JSON.parse(localStorage.getItem("token"))?.token
@@ -55,3 +66,5 @@ function createPreference(preferenceId) {
     }
   });
 }
+
+logofgButton.addEventListener("click", logoffAccount);

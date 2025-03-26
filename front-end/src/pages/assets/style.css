@@ -36,6 +36,12 @@
   a {
     @apply text-blue-400 underline;
   }
+
+  @media (pointer: fine) {
+    button {
+      @apply cursor-pointer
+    }
+  }
 }
 
 @layer components {
