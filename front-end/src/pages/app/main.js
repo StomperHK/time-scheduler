@@ -264,7 +264,7 @@ function deleteSchedules() {
 
 function copyTable() {
   let outputText = "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
-  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
+  const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
 
   for (let schedule in savedSchedules) {
     outputText += `${schedule} - ${savedSchedules[schedule]}\n`;
