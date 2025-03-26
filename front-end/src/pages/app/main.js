@@ -25,16 +25,26 @@ function debounce(fn, delay) {
   };
 }
 
-function showUserData(name, picture) {
+function showUserData(name, picture, is_premium) {
   const userDataPlaceholder = document.querySelector('[data-js="user-data"]');
   const userInfoHtml = `
-    <p class="font-semibold">${name}</p>
+    <p class="font-semibold">
+      ${
+        is_premium
+          ? '<i class="fa-solid fa-web-awesome mr-2 text-yellow-500 text-xl" title="premium"></i>'
+          : '<a data-js="get-premium" href="/premium/" class="btn mr-4 no-underline bg-yellow-500 hidden md:inline">obter premium <i class="fa-solid fa-crown"></i></a>'
+      } ${name}
+    </p>
     ${
       picture
         ? `<img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full" />`
         : `<div class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</div>`
     }
   `;
+
+  if (is_premium) {
+    document.querySelectorAll('[data-js="get-premium"]').forEach(node => node.remove())
+  }
 
   userDataPlaceholder.innerHTML = userInfoHtml;
 }
@@ -46,14 +56,14 @@ function getInittials(name) {
 
 function parseUserData({ name, picture, created_at, is_premium }) {
   const accountAge = Date.now() - new Date(created_at).valueOf();
-  const oneWeekInMs = 1000 * 60 * 60 * 24 * 7;
+  const twoWeeksInMs = 1000 * 60 * 60 * 24 * 7 * 2;
 
-  if (accountAge > oneWeekInMs && !is_premium) {
+  if (accountAge > twoWeeksInMs && !is_premium) {
     location.href = "/premium/";
     return;
   }
 
-  showUserData(name, picture);
+  showUserData(name, picture, is_premium);
 }
 
 function saveDataOnLocalStorage() {
@@ -284,14 +294,14 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  const userData = await validateUser(true)
+  const userData = await validateUser(true);
   hideLoadingScreen();
-  
+
   if (!userData) {
-    window.location.href = "/login/"
+    window.location.href = "/login/";
   }
 
-  parseUserData(userData)
+  parseUserData(userData);
   allocateSpaceForSchedulesInLocalStorage();
 
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
