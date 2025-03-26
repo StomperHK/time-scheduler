@@ -200,7 +200,7 @@ function showBreakTime(currentTime, breakTime, fragment) {
     const breakTimeLi = document.createElement("li");
     const breakTimeText = document.createElement("time");
 
-    breakTimeText.textContent = breakTime.time.toString();
+    breakTimeText.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${breakTime.time.toString()}`
     breakTimeText.setAttribute("datetime", breakTime.time.toString());
     breakTimeLi.className = "!my-6 text-center font-bold";
     breakTimeText.className = "text-gray-500 text-xl";
