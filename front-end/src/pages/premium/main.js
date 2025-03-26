@@ -5,10 +5,15 @@ import "/assets/style.css";
 document.querySelector('[data-js="logo"]').src = logo;
 
 async function main() {
-  const userIsValid = await validateUser();
+  const userData = await validateUser(true);
 
-  if (!userIsValid) {
+  if (!userData) {
     location.href = "/login/";
+    return;
+  }
+
+  if (userData.is_premium) {
+    location.href = "/app/";
     return;
   }
 
