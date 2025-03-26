@@ -74,7 +74,7 @@ export class User {
 
   async upgradeUserToPremium(userId) {
     await this.#sql`
-      UPDATE Users SET is_premium = true WHERE id = ${userId}
+      UPDATE Users SET is_premium = TRUE WHERE id = ${userId}
     `
   }
 }
