@@ -73,8 +73,10 @@ export class User {
   }
 
   async upgradeUserToPremium(userId) {
+    console.log(userId)
     await this.#sql`
       UPDATE Users SET is_premium = TRUE WHERE id = ${userId}
     `
+    console.log("atualizou")
   }
 }
