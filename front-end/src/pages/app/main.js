@@ -262,6 +262,26 @@ function deleteSchedules() {
   showAmountOfFilledSchedules(0);
 }
 
+function openConfirmDeleteModal() {
+  const confirmDeleteModal = document.querySelector("[data-js='confirm-delete-modal']");
+  confirmDeleteModal.classList.remove("hidden");
+
+  const deleteX = confirmDeleteModal.querySelector('[data-js="close-delete-modal"]')
+  const confirmButton = confirmDeleteModal.querySelector('[data-js="confirm-delete"]');
+  const cancelButton = confirmDeleteModal.querySelector('[data-js="cancel-delete"]');
+
+  deleteX.addEventListener("click", () => confirmDeleteModal.classList.add("hidden"));
+
+  confirmButton.addEventListener("click", () => {
+    deleteSchedules();
+    confirmDeleteModal.classList.add("hidden");
+  });
+
+  cancelButton.addEventListener("click", () => {
+    confirmDeleteModal.classList.add("hidden");
+  });
+}
+
 function copyTable() {
   let outputText = "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
   const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
@@ -343,6 +363,6 @@ main();
 logofgButton.addEventListener("click", logoffAccount);
 userPreferencesButton.addEventListener("click", openUserPreferences);
 saveUserPreferencesButton.addEventListener("click", saveUserPreferences);
-deleteSchedulesButton.addEventListener("click", deleteSchedules);
+deleteSchedulesButton.addEventListener("click", openConfirmDeleteModal);
 copyTableButton.addEventListener("click", copyTable);
 modalCloseButtons.forEach((button) => button.addEventListener("click", closeAssociatedModal));
