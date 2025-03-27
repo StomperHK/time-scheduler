@@ -1,7 +1,6 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
-import { hideLoadingScreen } from "../../utils/loadingScreen";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
@@ -328,14 +327,15 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  const userData = await validateUser(true);
-  hideLoadingScreen();
+  validateUser(true)
+  .then(userData => {
+    if (!userData) {
+      window.location.href = "/login/";
+    }
+  
+    parseUserData(userData);
+  })
 
-  if (!userData) {
-    window.location.href = "/login/";
-  }
-
-  parseUserData(userData);
   allocateSpaceForSchedulesInLocalStorage();
 
   const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
