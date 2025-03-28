@@ -147,7 +147,7 @@ window.onload = function () {
     callback: handleCredentialResponse,
   });
 
-  google.accounts.id.renderButton(document.getElementById("google-login-button"), { type: "standard", theme: "filled_blue", size: "large", text: "continue_with", logo_alignment: "left" });
+  google.accounts.id.renderButton(document.getElementById("google-login-button"), { type: "standard", theme: "filled_blue", size: "large", text: "continue_with", logo_alignment: "left", width: "400px" });
 
   google.accounts.id.prompt();
 };
