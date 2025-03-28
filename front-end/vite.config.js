@@ -32,7 +32,7 @@ export default defineConfig({
         premium: resolve(__dirname, "src/pages/premium/index.html"),
         pagamentoSucesso: resolve(__dirname, "src/pages/pagamento-sucesso/index.html"),
         pagamentoErro: resolve(__dirname, "src/pages/pagamento-erro/index.html"),
-        pagamentoSucesso: resolve(__dirname, "src/pages/pagamento-pendente/index.html"),
+        pagamentoPendente: resolve(__dirname, "src/pages/pagamento-pendente/index.html"),
       }
     },
     outDir: "../../dist",
