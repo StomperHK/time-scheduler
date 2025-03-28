@@ -133,7 +133,7 @@ window.onload = function () {
     callback: handleCredentialResponse,
   });
 
-  google.accounts.id.renderButton(document.getElementById("google-login-button"), { type: "standard", theme: "filled_blue", size: "large", width: "400px" });
+  google.accounts.id.renderButton(document.getElementById("google-login-button"), { type: "standard", theme: "filled_blue", size: "large", width: "100%" });
 
   google.accounts.id.prompt();
 };
