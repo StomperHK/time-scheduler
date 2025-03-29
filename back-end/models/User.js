@@ -51,9 +51,9 @@ export class User {
       }
 
       if (user.login_type === "oauth") return {message: "account type is oauth"}
-
-      return {message: "wrong login"}
     }
+
+    return {message: "wrong login"}
   }
 
   async getUserData(userId) {

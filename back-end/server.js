@@ -71,6 +71,7 @@ app.post("/auth/login", async (req, res) => {
     const result = await userModel.login(email, password);
 
     if (result.userId) {
+      console.log(result.userId)
       const secret = process.env.SECRET;
       const token = jwt.sign({ userId: result.userId }, secret, { expiresIn: "7d" });
       return res.status(200).json({ token, type: "email/password" });
