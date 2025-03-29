@@ -11,8 +11,8 @@ export class ScheduleTime {
   }
 
   increaseTime(minutesIncrease) {
-    const newMinute = (this.minute + minutesIncrease) % 60;
-
+    const newMinute = (Number(this.minute) + Number(minutesIncrease)) % 60;
+    
     if (newMinute <= this.minute) {
       this.hour = this.hour + 1;
       this.minute = newMinute;
