@@ -32,7 +32,7 @@ function logoffAccount() {
 
 function showUserData(name, picture, is_premium) {
   const userDataPlaceholder = document.querySelector('[data-js="user-data"]');
-  const premiumLinsk = document.querySelectorAll('[data-js="get-premium"]')
+  const premiumLinks = document.querySelectorAll('[data-js="get-premium"]');
   const userInfoHtml = `
     <p class="flex items-center font-semibold">
       ${
@@ -44,15 +44,17 @@ function showUserData(name, picture, is_premium) {
     ${
       picture
         ? `<button onclick="toggleUserModal()"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500" /></button>`
-        : `<button onclick="toggleUserModal()" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(name)}</button>`
+        : `<button onclick="toggleUserModal()" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(
+            name
+          )}</button>`
     }
   `;
 
   if (is_premium) {
-    premiumLinsk.forEach(node => node.remove())
+    premiumLinks.forEach((node) => node.remove());
   }
 
-  document.querySelector('[data-js="user-modal-username"]').textContent = name
+  document.querySelector('[data-js="user-modal-username"]').textContent = name;
 
   userDataPlaceholder.innerHTML = userInfoHtml;
 }
@@ -116,13 +118,15 @@ function defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOf
   }
 }
 
-function applyUserPreferences() {
+function getNewUserPreferences() {
   const userPreferencesSelects = document.querySelectorAll("[data-js='user-preferences-modal'] select");
-  const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
+  const newUserPreferences = {}
 
   for (const select of userPreferencesSelects) {
-    select.value = userPreferences[select.name];
+    newUserPreferences[select.name] = select.value;
   }
+
+  return newUserPreferences
 }
 
 function returnAmountOfFilledSchedules(savedSchedulesData) {
@@ -199,7 +203,7 @@ function showBreakTime(currentTime, breakTime, fragment) {
     const breakTimeLi = document.createElement("li");
     const breakTimeText = document.createElement("time");
 
-    breakTimeText.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${breakTime.time.toString()}`
+    breakTimeText.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${breakTime.time.toString()}`;
     breakTimeText.setAttribute("datetime", breakTime.time.toString());
     breakTimeLi.className = "!my-6 text-center font-bold";
     breakTimeText.className = "text-gray-500 text-xl";
@@ -225,14 +229,9 @@ function openUserPreferences() {
 }
 
 function saveUserPreferences() {
-  const newUserPreferences = {};
-  const userPreferencesSelects = Array.from(document.querySelectorAll("[data-js='user-preferences-modal'] select")).forEach((select) => {
-    newUserPreferences[select.name] = select.name === "sessionDuration" ? Number(select.value) : select.value;
-  });
-
+  const newUserPreferences = getNewUserPreferences();
   applyUserPreferencesEffects(newUserPreferences);
-
-  localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
+  populateSchedulesDataOnLocalStorage(newUserPreferences);
 
   createToaster("Preferências salvas");
 }
@@ -242,10 +241,27 @@ function applyUserPreferencesEffects(newUserPreferences) {
   const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
   if (!filledSchedules) {
-    savedSchedules.localUserPreferences = newUserPreferences || JSON.parse(localStorage.getItem("userPreferences"));
+    savedSchedules.localUserPreferences = newUserPreferences;
     localStorage.setItem("schedules", JSON.stringify(savedSchedules));
 
     populateAppWithSchedules(savedSchedules, true);
+  }
+}
+
+function populateSchedulesDataOnLocalStorage(newUserPreferences) {
+  newUserPreferences = newUserPreferences ? newUserPreferences  : JSON.parse(localStorage.getItem("userPreferences"))
+  const schedulesObject = Array.from(document.querySelectorAll('[data-js="schedule"]'))
+    .reduce((curr, schedule) => {
+      curr[schedule.firstElementChild.textContent] = schedule.querySelector("input").value
+      return curr
+    }, {})
+
+  localStorage.setItem("schedules", JSON.stringify({data: schedulesObject, localUserPreferences: newUserPreferences}))
+}
+
+function populateSchedulesDataOnLocalStorageIfItsEmpty() {
+  if (!Object.keys(JSON.parse(localStorage.getItem("schedules")).data).length) {
+    populateSchedulesDataOnLocalStorage()
   }
 }
 
@@ -256,8 +272,10 @@ function deleteSchedules() {
     input.value = "";
   }
 
-  localStorage.setItem("schedules", '{"data": {}, "localUserPreferences": {}}');
-  applyUserPreferencesEffects();
+  const globalUserPreferences = localStorage.getItem("userPreferences");
+  localStorage.setItem("schedules", `{"data": {}, "localUserPreferences": ${globalUserPreferences}}`);
+  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
+  populateAppWithSchedules(savedSchedules, true);
   showAmountOfFilledSchedules(0);
 }
 
@@ -265,7 +283,7 @@ function openConfirmDeleteModal() {
   const confirmDeleteModal = document.querySelector("[data-js='confirm-delete-modal']");
   confirmDeleteModal.classList.remove("hidden");
 
-  const deleteX = confirmDeleteModal.querySelector('[data-js="close-delete-modal"]')
+  const deleteX = confirmDeleteModal.querySelector('[data-js="close-delete-modal"]');
   const confirmButton = confirmDeleteModal.querySelector('[data-js="confirm-delete"]');
   const cancelButton = confirmDeleteModal.querySelector('[data-js="cancel-delete"]');
 
@@ -282,7 +300,7 @@ function openConfirmDeleteModal() {
 }
 
 function copyTable() {
-  let outputText = "        " + translatedDaysOfTheWeek[new Date().getDay()] + "\n";
+  let outputText = `       ${String.fromCodePoint("0x1F488")} ${translatedDaysOfTheWeek[new Date().getDay()]} ${String.fromCodePoint("0x1F488")}\n`;
   const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
 
   for (let schedule in savedSchedules) {
@@ -327,14 +345,13 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  validateUser(true)
-  .then(userData => {
+  validateUser(true).then((userData) => {
     if (!userData) {
       window.location.href = "/login/";
     }
-  
+
     parseUserData(userData);
-  })
+  });
 
   allocateSpaceForSchedulesInLocalStorage();
 
@@ -347,13 +364,10 @@ async function main() {
   }
 
   showAmountOfFilledSchedules(amountOfFilledSchedules);
-  defineIfLocalUserPreferencesWillGetOverwritten(
-    savedSchedules,
-
-    amountOfFilledSchedules
-  );
+  defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules);
   reflectUserPreferencesOnPreferencsForm();
   populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
+  populateSchedulesDataOnLocalStorageIfItsEmpty()
 
   window.toggleUserModal = toggleUserModal;
 }
