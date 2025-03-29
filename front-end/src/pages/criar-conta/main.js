@@ -80,26 +80,32 @@ async function createAccount(event) {
 
 function disableButton() {
   const [spinner, buttonText] = submitButton.children;
+  const delayWarning = document.querySelector('[data-js="delay-warning"]');
 
   submitButton.disabled = true;
   submitButton.classList.add("opacity-70");
 
   spinner.classList.remove("hidden");
   buttonText.classList.add("opacity-0");
+
+  delayWarning.classList.remove("invisible");
 }
 
 function enableButton() {
   const [spinner, buttonText] = submitButton.children;
+  const delayWarning = document.querySelector('[data-js="delay-warning"]');
 
   submitButton.disabled = false;
   submitButton.classList.add("opacity-100");
 
   spinner.classList.add("hidden");
   buttonText.classList.remove("opacity-0");
+
+  delayWarning.classList.add("invisible");
 }
 
 async function handleCredentialResponse(response) {
-  disableButton()
+  disableButton();
 
   const apiResponse = await fetch(import.meta.env.VITE_API_URL + "/auth/oauth-register", {
     method: "POST",
@@ -109,7 +115,7 @@ async function handleCredentialResponse(response) {
     body: JSON.stringify(response),
   });
 
-  enableButton()
+  enableButton();
 
   if (!apiResponse.ok) {
     createToaster("Erro no banco de dados", "error");
@@ -147,7 +153,14 @@ window.onload = function () {
     callback: handleCredentialResponse,
   });
 
-  google.accounts.id.renderButton(document.getElementById("google-login-button"), { type: "standard", theme: "filled_blue", size: "large", text: "continue_with", logo_alignment: "left", width: "100%" });
+  google.accounts.id.renderButton(document.getElementById("google-login-button"), {
+    type: "standard",
+    theme: "filled_blue",
+    size: "large",
+    text: "continue_with",
+    logo_alignment: "left",
+    width: "100%",
+  });
 
   google.accounts.id.prompt();
 };
