@@ -1,8 +1,9 @@
 {
   "name": "Agendador de Horários",
   "short_name": "Horários",
-  "start_url": ".",
+  "start_url": "/app/",
   "display": "standalone",
+  "description": "O Agendador de Horários é um aplicativo que permite aos usuários organizar e gerenciar seus compromissos de forma eficiente.",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -17,16 +18,18 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/home.webp",
-      "sizes": "1349x768",
+      "src": "/screenshots/homescreen.png",
+      "sizes": "1346x768",
       "type": "image/webp",
-      "label": "Imagem de início do aplicativo"
+      "label": "Imagem de início do aplicativo",
+      "form_factor": "wide"
     },
     {
-      "src": "/screenshots/dashboard.webp",
-      "sizes": "1349x768",
+      "src": "/screenshots/homescreen-preferences.png",
+      "sizes": "1346x768",
       "type": "image/webp",
-      "label": "Opções de preferência do aplicativo"
+      "label": "Opções de preferência do aplicativo",
+      "form_factor": "wide"
     }
   ],
   "theme_color": "#155dfc",
