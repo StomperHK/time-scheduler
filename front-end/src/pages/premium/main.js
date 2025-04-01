@@ -1,4 +1,5 @@
 import { validateUser } from "../../api/validateUser";
+import { returnUserExceededTestTime } from "../../utils/returnUserExceededTestTime";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
@@ -7,6 +8,7 @@ document.querySelector('[data-js="logo"]').src = logo;
 
 async function main() {
   const userData = await validateUser(true);
+  const userExceededTestTime = returnUserExceededTestTime(userData.created_at, userData.is_premium)
 
   if (!userData) {
     location.href = "/login/";
@@ -15,6 +17,11 @@ async function main() {
 
   if (userData.is_premium) {
     location.href = "/app/";
+    return;
+  }
+
+  if (userExceededTestTime) {
+    document.querySelector('[data-js="test-period-expired-text"]').classList.remove("hidden")
     return;
   }
 

@@ -28,46 +28,53 @@
       </nav>
     </header>
 
-    <main class="px-6 py-12 lg:px-8 lg:flex lg:items-center lg:justify-center lg:gap-4">
-      <div>
-        <div class="mx-auto max-w-4xl text-center">
-          <p class="text-base/7 font-semibold text-indigo-600">PREMIUM</p>
-          <h1 class="mt-2 mx-auto text-4xl max-w-xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">Use o aplicativo de forma ilimitada</h1>
-        </div>
-        <p class="mx-auto mb-12 mt-6 max-w-2xl text-center text-lg font-medium  text-gray-600 sm:text-xl/8">Pague o valor uma única vez, use para sempre.</p>
+    <main class="flex flex-col items-center justify-center min-h-[calc(100svh-var(--header-height))] px-6 py-12">
+      <div data-js="test-period-expired-text" class="hidden mb-6 p-4 border border-red-600 bg-red-300/10 rounded-md bg-red-50 text-red-700">
+        <strong class="block font-bold align-middle"><i class="fa-solid fa-triangle-exclamation"></i> Atenção:</strong>
+        <span>Seu período de teste expirou. Faça o upgrade para continuar usando.</span>
       </div>
       
-      <div class="mx-auto max-w-96 rounded-md bg-white/60 relative p-6 ring-1 ring-gray-900/10 sm:p-8 lg:mx-0">
-        <div class="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-bl-md">
-          58% OFF
+      <div class="lg:px-8 lg:flex lg:flex-wrap lg:items-center lg:justify-center lg:gap-4">
+        <div>
+          <div class="mx-auto max-w-4xl text-center">
+            <p class="text-base/7 font-semibold text-indigo-600">PREMIUM</p>
+            <h1 class="mt-2 mx-auto text-4xl max-w-xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">Use o aplicativo de forma ilimitada</h1>
+          </div>
+          <p class="mx-auto mb-12 mt-6 max-w-2xl text-center text-lg font-medium  text-gray-600 sm:text-xl/8">Pague o valor uma única vez, use para sempre.</p>
         </div>
-        <span class="text-base/7 font-semibold text-indigo-600">de <del>R$ 59,90</del></span>
-        <p class="mt-4 flex items-baseline gap-x-2">
-          por
-          <span class="text-5xl font-semibold tracking-tight text-gray-900">R$35</span>
-        </p>
-        <p class="mt-6 text-base/7 text-gray-600">Aproveite a promoção por tempo limitado.</p>
-        <ul role="list" class="mt-4 mb-6 space-y-2 text-sm/6 text-gray-600 sm:mt-6">
-          <li class="flex gap-x-3">
-            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-            </svg>
-            Controle seus horários melhor
-          </li>
-          <li class="flex gap-x-3">
-            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-            </svg>
-            Uso ilimitado
-          </li>
-          <li class="flex gap-x-3">
-            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-            </svg>
-            Suporte 24 horas
-          </li>
-        </ul>
-        <div id="wallet-container" class="min-h-[103px]"></div>
+        
+        <div class="mx-auto max-w-96 rounded-md bg-white/60 relative p-6 ring-1 ring-gray-900/10 sm:p-8 lg:mx-0">
+          <div class="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-bl-md">
+            58% OFF
+          </div>
+          <span class="text-base/7 font-semibold text-indigo-600">de <del>R$ 59,90</del></span>
+          <p class="mt-4 flex items-baseline gap-x-2">
+            por
+            <span class="text-5xl font-semibold tracking-tight text-gray-900">R$35</span>
+          </p>
+          <p class="mt-6 text-base/7 text-gray-600">Aproveite a promoção por tempo limitado.</p>
+          <ul role="list" class="mt-4 mb-6 space-y-2 text-sm/6 text-gray-600 sm:mt-6">
+            <li class="flex gap-x-3">
+              <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+              </svg>
+              Controle seus horários melhor
+            </li>
+            <li class="flex gap-x-3">
+              <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+              </svg>
+              Uso ilimitado
+            </li>
+            <li class="flex gap-x-3">
+              <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+              </svg>
+              Suporte 24 horas
+            </li>
+          </ul>
+          <div id="wallet-container" class="min-h-[103px]"></div>
+        </div>
       </div>
     </main>
     
