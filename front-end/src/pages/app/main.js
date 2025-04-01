@@ -43,8 +43,8 @@ function showUserData(name, picture, is_premium) {
     </p>
     ${
       picture
-        ? `<button onclick="toggleUserModal()"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500" /></button>`
-        : `<button onclick="toggleUserModal()" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(
+        ? `<button data-js="toggle-user-modal"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500" /></button>`
+        : `<button data-js="toggle-user-modal" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(
             name
           )}</button>`
     }
@@ -57,6 +57,7 @@ function showUserData(name, picture, is_premium) {
   document.querySelector('[data-js="user-modal-username"]').textContent = name;
 
   userDataPlaceholder.innerHTML = userInfoHtml;
+  userDataPlaceholder.querySelector('[data-js="toggle-user-modal"]').addEventListener("click", toggleUserModal)
 }
 
 function toggleUserModal() {

@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+      script-src 'self' https://kit.fontawesome.com;
+      style-src https://fonts.googleapis.com 'unsafe-inline';
+      connect-src 'self' https://ka-f.fontawesome.com %VITE_API_URL%; frame-src 'none';
+      font-src https://fonts.gstatic.com https://ka-f.fontawesome.com;
+      img-src 'self' https://lh3.googleusercontent.com"
+    >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://kit.fontawesome.com/5b3bf62810.js" crossorigin="anonymous"></script>
