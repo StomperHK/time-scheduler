@@ -1,6 +1,7 @@
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
+import { returnUserExceededTestTime } from "../../utils/returnUserExceededTestTime";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
@@ -71,10 +72,9 @@ function getInittials(name) {
 }
 
 function parseUserData({ name, picture, created_at, is_premium }) {
-  const accountAge = Date.now() - new Date(created_at).valueOf();
-  const twoWeeksInMs = 1000 * 60 * 60 * 24 * 7 * 2;
+  const userExceededTestTime = returnUserExceededTestTime(created_at, is_premium)
 
-  if (accountAge > twoWeeksInMs && !is_premium) {
+  if (userExceededTestTime) {
     location.href = "/premium/";
     return;
   }
