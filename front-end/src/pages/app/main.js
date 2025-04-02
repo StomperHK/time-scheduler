@@ -171,6 +171,7 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
   const endTime = new ScheduleTime(...closingTime.split(":").map((n) => Number(n)));
   const firstBreakTime = { time: new ScheduleTime(12, 0), wasCreated: false };
   const secondBreakTime = { time: new ScheduleTime(16, 0), wasCreated: false };
+  const thirdBreakTime = { time: new ScheduleTime(20, 0), wasCreated: false };
 
   while (currentTime.isSmallerThanOrEqual(endTime)) {
     const schedule = scheduleTemplate.content.cloneNode(true);
@@ -202,6 +203,7 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
 
     showBreakTime(currentTime, firstBreakTime, fragment);
     showBreakTime(currentTime, secondBreakTime, fragment);
+    showBreakTime(currentTime, thirdBreakTime, fragment);
   }
 
   if (recalculate) {
