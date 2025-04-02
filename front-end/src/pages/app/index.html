@@ -24,13 +24,19 @@
     <meta name="description" content="O Agendador de Horários é um aplicativo que permite a negócios locais organizar e gerenciar seus compromissos de forma eficiente.">
 
     <template id="schedule">
-      <li data-js="schedule" class="flex items-center gap-3 relative md:gap-4">
+      <li data-js="schedule" data-disabled="false" class="flex items-center gap-3 relative h-[40px] md:gap-4 data-[disabled='true']:justify-between data-[disabled='true']:[&>.disabled-container]:flex data-[disabled='true']:[&_>time,&_>input]:hidden">
         <time data-js="time" class="text-lg font-bold text-zinc-700 bg-blue sm:text-2xl">00:00</time>
+        <div class="disabled-container hidden items-center justify-center gap-2 w-full h-full bg-blue-600/5 rounded-md">
+          <i class="fa-solid fa-eye-slash text-lg"></i>
+          <span>desativado</span>
+        </div>
         <input data-js="name-input" type="text" maxlength="30" class="w-full p-1.5 border-2 rounded-sm border-gray-400 outline-0 focus:border-blue-700 transition-colors [transition-duration:150ms]" placeholder="nome do cliente" />
+
         <div class="group">
           <button data-js="button" title="mais opções" class="btn btn-sm w-4"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-          <ul data-js="schedule-menu" class="absolute top-0 -right-2 z-10 bg-zinc-100 shadow-xl ring-1 ring-gray-900/10 rounded-md p-2 hidden group-focus-within:block">
-            <li><button data-js="delete-button" class="btn btn-text">apagar <i class="fa-solid fa-trash"></i></button></li>
+          <ul data-js="schedule-menu" class="min-w-[140px] absolute top-0 -right-2 z-10 bg-zinc-100 shadow-xl ring-1 ring-gray-900/10 rounded-md p-2 hidden group-focus-within:block *:even:mt-2">
+            <li><button data-js="delete-button" class="btn btn-text flex justify-between items-center w-full bg-blue-100 text-blue-600">apagar <i class="fa-solid fa-trash"></i></button></li>
+            <li><button data-js="disable-button" class="btn btn-text flex justify-between items-center w-full bg-blue-100 text-blue-600"><span>desativar</span> <i class="fa-solid fa-eye"></i></button></li>
           </ul>
         </div>
       </li>

@@ -85,15 +85,15 @@ function parseUserData({ name, picture, created_at, is_premium }) {
 function saveDataOnLocalStorage() {
   // debounce save data on local storage
   const nameInputs = document.querySelectorAll('[data-js="schedule"] [data-js="name-input"]');
-  let newSchedules = { data: {}, localUserPreferences: {} };
+  const localUserPreferences = JSON.parse(localStorage.getItem("schedules")).localUserPreferences
+  let newSchedules = { data: {}, localUserPreferences: localUserPreferences };
 
   for (const input of nameInputs) {
-    newSchedules.data[input.previousElementSibling.textContent] = input.value;
+    const isDisabled = input.parentElement.dataset.disabled == "true"
+    newSchedules.data[input.parentElement.firstElementChild.textContent] = {name: input.value, isDisabled: isDisabled, duration: localUserPreferences.sessionDuration};  // set time element as object key
   }
 
   showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data));
-
-  newSchedules.localUserPreferences = JSON.parse(localStorage.getItem("schedules")).localUserPreferences;
 
   localStorage.setItem("schedules", JSON.stringify(newSchedules));
 
@@ -101,7 +101,11 @@ function saveDataOnLocalStorage() {
 }
 
 function allocateSpaceForSchedulesInLocalStorage() {
-  if (!localStorage.getItem("schedules")) {
+  const schedulesData = JSON.parse(localStorage.getItem("schedules"))?.data
+  const schedulesDataIsInRightFormat = schedulesData && typeof schedulesData[Object.keys(schedulesData)[0]] === "object"   // In case scheduler data is on the old format, with key/string pairs
+  console.log(schedulesDataIsInRightFormat)
+
+  if (!schedulesDataIsInRightFormat) {
     localStorage.setItem("schedules", '{"data": {}, "localUserPreferences": {}}');
   }
   if (!localStorage.getItem("userPreferences")) {
@@ -134,7 +138,7 @@ function returnAmountOfFilledSchedules(savedSchedulesData) {
   let scheduleAmount = 0;
 
   for (const val in savedSchedulesData) {
-    if (savedSchedulesData[val] !== "") {
+    if (savedSchedulesData[val].name !== "") {
       scheduleAmount++;
     }
   }
@@ -173,14 +177,23 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
     const time = schedule.querySelector('[data-js="time"]');
     const input = schedule.querySelector('[data-js="name-input"]');
     const deleteCustomerButton = schedule.querySelector('[data-js="delete-button"]');
+    const disableScheduleButton = schedule.querySelector('[data-js="disable-button"]')
 
     time.textContent = currentTime.toString();
     time.setAttribute("datetime", currentTime.toString());
     input.addEventListener("input", debouncedSaveDataOnLocalStorage);
     deleteCustomerButton.addEventListener("click", deleteCustomer);
+    disableScheduleButton.addEventListener("click", disableSchedule)
 
-    if (currentTime.toString() in savedSchedules.data) {
-      input.value = savedSchedules.data[currentTime.toString()];
+    if (currentTime.toString() in savedSchedules.data) {    // in case theres no schedules in localStorage
+      input.value = savedSchedules.data[currentTime.toString()].name;
+
+      if (savedSchedules.data[currentTime.toString()].isDisabled) {  // apply disabled state if schedule is disabled in storage
+        schedule.firstElementChild.setAttribute("data-disabled", "true");
+        disableScheduleButton.firstElementChild.textContent = "ativar"
+        input.disabled = true
+        disableScheduleButton.lastElementChild.setAttribute("class", "fa-solid fa-eye-slash")
+      }
     }
 
     currentTime.increaseTime(sessionDuration);
@@ -222,6 +235,29 @@ function deleteCustomer(event) {
   debouncedSaveDataOnLocalStorage();
 }
 
+function disableSchedule(event) {
+  const clickedButton = event.target.matches('[data-js="disable-button"]') 
+    ? event.target 
+    : event.target.closest('[data-js="disable-button"]');
+  const scheduleItem = clickedButton.closest('[data-js="schedule"]');
+  const input = scheduleItem.querySelector('[data-js="name-input"]')
+  const isDisabled = scheduleItem.getAttribute("data-disabled") === "true";
+
+  if (isDisabled) {
+    scheduleItem.setAttribute("data-disabled", "false");
+    clickedButton.firstElementChild.textContent = "desativar";
+    input.disabled = false
+    clickedButton.lastElementChild.setAttribute("class", "fa-solid fa-eye");
+  } else {
+    scheduleItem.setAttribute("data-disabled", "true");
+    clickedButton.firstElementChild.textContent = "ativar";
+    input.disabled = true
+    clickedButton.lastElementChild.setAttribute("class", "fa-solid fa-eye-slash");
+  }
+
+  saveDataOnLocalStorage();
+}
+
 function openUserPreferences() {
   const userPreferencesModal = document.querySelector("[data-js='user-preferences-modal']");
   userPreferencesModal.show();
@@ -251,9 +287,14 @@ function applyUserPreferencesEffects(newUserPreferences) {
 
 function populateSchedulesDataOnLocalStorage(newUserPreferences) {
   newUserPreferences = newUserPreferences ? newUserPreferences  : JSON.parse(localStorage.getItem("userPreferences"))
+
   const schedulesObject = Array.from(document.querySelectorAll('[data-js="schedule"]'))
     .reduce((curr, schedule) => {
-      curr[schedule.firstElementChild.textContent] = schedule.querySelector("input").value
+      curr[schedule.firstElementChild.textContent] = {
+        name: schedule.querySelector("input").value,
+        isDisabled: schedule.dataset.disabled === "true",
+        duration: newUserPreferences.sessionDuration
+      };
       return curr
     }, {})
 
@@ -301,11 +342,13 @@ function openConfirmDeleteModal() {
 }
 
 function copyTable() {
-  let outputText = `       ${String.fromCodePoint("0x1F488")} ${translatedDaysOfTheWeek[new Date().getDay()]} ${String.fromCodePoint("0x1F488")}\n`;
+  let outputText = `       ${String.fromCodePoint("0x1F4C5")} ${translatedDaysOfTheWeek[new Date().getDay()]} ${String.fromCodePoint("0x1F4C5")}\n`;
   const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
 
   for (let schedule in savedSchedules) {
-    outputText += `${schedule} - ${savedSchedules[schedule]}\n`;
+    const scheduleIsNotDisabled = savedSchedules[schedule].isDisabled != true
+
+    if (scheduleIsNotDisabled) outputText += `${schedule} - ${savedSchedules[schedule].name}\n`;
   }
 
   navigator.clipboard
