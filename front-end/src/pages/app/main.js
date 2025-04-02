@@ -344,7 +344,7 @@ function openConfirmDeleteModal() {
 }
 
 function copyTable() {
-  let outputText = `       ${String.fromCodePoint("0x1F4C5")} ${translatedDaysOfTheWeek[new Date().getDay()]} ${String.fromCodePoint("0x1F4C5")}\n`;
+  let outputText = `       ${String.fromCodePoint("0x1F488")} ${translatedDaysOfTheWeek[new Date().getDay()]} ${String.fromCodePoint("0x1F488")}\n`;
   const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
 
   for (let schedule in savedSchedules) {
