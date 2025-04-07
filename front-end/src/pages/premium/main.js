@@ -40,7 +40,7 @@ async function getPreferenceId() {
   const token = JSON.parse(localStorage.getItem("token"))?.token
 
   try {
-    const response = await fetch(import.meta.env.VITE_API_URL + "/create-preference", {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/mercado-pago/create-preference", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
