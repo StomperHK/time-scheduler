@@ -66,23 +66,89 @@
       </div>
     </header>
 
-    <main class="w-[90%] max-w-3xl m-auto mb-12">
-      <h1 class="mb-10 text-center text-4xl font-bold">Horários</h1>
+    <main class="w-[90%] m-auto mb-12">
+      <h1 class="mb-10 text-center text-4xl font-bold">Horários Para a Semana</h1>
 
-      <div class="bg-zinc-100/60 ring-2 ring-blue-600/40 mb-10 shadow-xl rounded-md">
-        <div class="mb-8 p-4 py-10 bg-blue-600 text-white ">
-          <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
-        </div>
-        <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
-          <button data-js="delete-schedules" class="btn btn-text btn-red">resetar <i class="fa-solid fa-trash"></i></span></button>
-          <button data-js="copy-table" class="btn btn-text">copiar tabela <i class="fa-solid fa-copy"></i></button>
-        </div>
+      <ul class="flex gap-4 px-6 py-2 mb-6 text-lg overflow-auto text-zinc-800 min-[1210px]:justify-center
+        [&_button]:w-[110px] [&_button]:border-2 [&_button]:border-blue-600 [&_button]:bg-blue-100 [&_button]:p-4 [&_button]:shadow [&_button]:rounded-md [&_i]:mb-2 [&_i]:!block">
+        <li>
+          <button data-js="day-tab" data-day="monday">
+            <i class="fa-regular fa-calendar-days"></i>
+            Segunda
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="tuesday">
+            <i class="fa-regular fa-calendar-days"></i> Terça
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="wednesday">
+            <i class="fa-regular fa-calendar-days"></i> Quarta
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="thursday">
+            <i class="fa-regular fa-calendar-days"></i> Quinta
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="friday">
+            <i class="fa-regular fa-calendar-days"></i> Sexta
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="saturday">
+            <i class="fa-regular fa-calendar-days"></i> Sábado
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+        <li>
+          <button data-js="day-tab" data-day="sunday">
+            <i class="fa-regular fa-calendar-days"></i> Domingo
+            <div class="mt-2 font-bold text-sm">
+              <span data-js="day-tab-customers">0</span> clientes
+            </div>
+          </button>
+        </li>
+      </ul>
 
-        <ol id="schedules" class="p-4 [&>*+*]:mt-4">
-        </ol>
+      <div data-js="day-schedules-modal" data-open="false" class="p-10 w-full h-[100svh] fixed top-0 left-0 translate-y-full invisible bg-zinc-800/40 overflow-auto data-[open='true']:translate-y-0 data-[open='true']:visible">   <!-- schedules modal -->
+        <button data-js="close-day-schedules-modal" type="button" title="fechar tabela horários" class="p-2 btn shadow mb-6">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="m-auto max-w-2xl bg-zinc-100 ring-2 ring-blue-600/40 mb-10 shadow-xl rounded-md">
+          <div class="mb-8 p-4 py-10 bg-blue-600 text-white">
+            <h1 data-js="amount-of-schedules" class="text-2xl font-bold">0 Clientes para hoje</h1>
+          </div>
+          <div class="flex justify-end gap-4 mb-4 px-4">   <!-- button controls -->
+            <button data-js="delete-schedules" class="btn btn-text btn-red">resetar <i class="fa-solid fa-trash"></i></span></button>
+            <button data-js="copy-table" class="btn btn-text">copiar tabela <i class="fa-solid fa-copy"></i></button>
+          </div>
+          <ol id="schedules" class="p-4 [&>*+*]:mt-4">
+          </ol>
+        </div>
       </div>
 
-      <div class="flex justify-end md:hidden">
+      <div class="flex justify-end md:hidden absolute right-7 bottom-7">
         <a data-js="get-premium" href="/premium/" class="btn btn-text no-underline bg-yellow-400 text-black">obter premium <i class="fa-solid fa-crown"></i></a>
       </div>
     </main>
@@ -94,10 +160,77 @@
           <button data-js="close-button" class="btn btn-sm"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <form>
+        <form data-js="user-preferences-form" aria-label="formulario de preferências">
+          <div class="flex justify-between mb-6">
+            <label for="businessType">Tipo de negócio</label>
+
+            <select name="business-type" id="business-type" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+              <option value="barbershop">Barbearia</option>
+              <option value="hairdresser">Cabelereira</option>
+              <option value="steticist">Esteticista</option>
+              <option value="other">Outro</option>
+            </select>
+          </div>
+
+          <div class="mb-6">
+            <div class="flex justify-between items-center">
+              <p>Dias que abre</p>
+
+              <div class="flex items-center gap-2
+                [&_input]:opacity-0 [&_input]:w-0 [&_input]:p-0 [&_input]:h-0 [&_input]:absolute
+                [&_div]:flex [&_div]:justify-center [&_div]:items-center [&_div]:w-8 [&_div]:h-8 [&_div]:border-2 [&_div]:border-blue-600 [&_div]:rounded-sm [&_div]:font-bold [&_div]:select-none">
+                <label class="h-">
+                  <input type="checkbox" name="days-open" value="monday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:outline-2 outline-black">
+                    S
+                  </div>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="tuesday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    T
+                  </div>
+                </label>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="thursday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    Q
+                  </div>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="friday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    Q
+                  </div>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="wednesday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    S
+                  </div>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="saturday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    S
+                  </div>
+                </label>
+                <label>
+                  <input type="checkbox" name="days-open" value="sunday" class="peer/open-day-checkbox">
+                  <div class="peer-checked/open-day-checkbox:text-white peer-checked/open-day-checkbox:bg-blue-600 peer-focus/open-day-checkbox:underline underline-offset-4">
+                    D
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="text-xl mb-4">Horários</h2>
+
           <div class="flex justify-between mb-2">
-            <label for="openingTime">Horário de abertura</label>
-            <select name="openingTime" id="openingTime" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+            <label for="opening-time">Horário de abertura</label>
+            <select name="opening-time" id="opening-time" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
               <option value="06:00">06:00</option>
               <option value="06:30">06:30</option>
               <option value="07:00">07:00</option>
@@ -114,8 +247,8 @@
           </div>
 
           <div class="flex justify-between mb-2">
-            <label for="closingTime">Horário de fechamento</label>
-            <select name="closingTime" id="closingTime" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+            <label for="closing-time">Horário de fechamento</label>
+            <select name="closing-time" id="closing-time" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
               <option value="13:00">13:00</option>
               <option value="13:30">13:30</option>
               <option value="14:00">14:00</option>
@@ -127,7 +260,7 @@
               <option value="17:00">17:00</option>
               <option value="17:30">17:30</option>
               <option value="18:00">18:00</option>
-              <option value="18:30" selected>18:30</option>
+              <option value="18:30">18:30</option>
               <option value="19:00">19:00</option>
               <option value="19:30">19:30</option>
               <option value="20:00">20:00</option>
@@ -143,16 +276,117 @@
           </div>
 
           <div class="flex justify-between mb-4">
-            <label for="sessionDuration">Duração da sessão</label>
-            <select name="sessionDuration" id="sessionDuration" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
-              <option value="15">15 minutos</option>
-              <option value="20">20 minutos</option>
-              <option value="25">25 minutos</option>
-              <option value="30" selected>30 minutos</option>
-              <option value="45">45 minutos</option>
-              <option value="60">60 minutos</option>
+            <label for="session-duration">Duração da sessão</label>
+            <select name="session-duration" id="session-duration" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+              <option value="00:15">15 minutos</option>
+              <option value="00:20">20 minutos</option>
+              <option value="00:25">25 minutos</option>
+              <option value="00:30" selected>30 minutos</option>
+              <option value="00:45">45 minutos</option>
+              <option value="00:60">60 minutos</option>
             </select>
           </div>
+
+          <details class="mb-6">
+            <summary class="mb-4 font-bold">Mais opções</summary>
+
+            <label class="flex items-center gap-2 mb-6">
+              <input type="checkbox" name="include-customer-name-in-copy" class="checkbox">
+              Incluir nomes de cliente na cópia da tabela
+            </label>
+
+            <label class="flex items-center gap-2 mb-2">
+              <input type="checkbox" name="closes-for-lunch" class="checkbox">
+              Tem pausa para o almoço
+            </label>
+  
+            <div class="flex justify-between mb-2">
+              <label for="lunch-starting-time">Início do almoço</label>
+              <select name="lunch-starting-time" id="lunch-starting-time" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+                <option value="11:00">11:00</option>
+                <option value="11:30">11:30</option>
+                <option value="12:00">12:00</option>
+                <option value="12:30">12:30</option>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+              </select>
+            </div>
+          
+  
+            <div class="flex justify-between mb-6">
+              <label for="lunch-duration-time">Duração do almoço</label>
+              <select name="lunch-duration-time" id="lunch-duration-time" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+                <option value="00:30">00:30</option>
+                <option value="01:00">01:00</option>
+                <option value="01:30">01:30</option>
+                <option value="02:00">02:00</option>
+              </select>
+            </div>
+
+            <h2 class="text-xl mb-4">horários Fim de Semana</h2>
+
+            <div class="flex justify-between mb-2">
+              <label for="opening-time-weekend">Horário de abertura</label>
+              <select name="opening-time-weekend" id="opening-time-weekend" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+                <option value="06:00">06:00</option>
+                <option value="06:30">06:30</option>
+                <option value="07:00">07:00</option>
+                <option value="07:30">07:30</option>
+                <option value="08:00">08:00</option>
+                <option value="08:30">08:30</option>
+                <option value="09:00">09:00</option>
+                <option value="09:30">09:30</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="11:30">11:30</option>
+                <option value="12:00">11:30</option>
+              </select>
+            </div>
+
+            <div class="flex justify-between mb-2">
+              <label for="closing-time-weekend">Horário de fechamento</label>
+              <select name="closing-time-weekend" id="closing-time-weekend" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+                <option value="12:00">12:00</option>
+                <option value="12:30">12:30</option>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+                <option value="14:30">14:30</option>
+                <option value="15:00">15:00</option>
+                <option value="15:30">15:30</option>
+                <option value="16:00">16:00</option>
+                <option value="16:30">16:30</option>
+                <option value="17:00">17:00</option>
+                <option value="17:30">17:30</option>
+                <option value="18:00">18:00</option>
+                <option value="18:30">18:30</option>
+                <option value="19:00">19:00</option>
+                <option value="19:30">19:30</option>
+                <option value="20:00">20:00</option>
+                <option value="20:30">20:30</option>
+                <option value="21:00">21:00</option>
+                <option value="21:30">21:30</option>
+                <option value="22:00">22:00</option>
+                <option value="22:30">22:30</option>
+                <option value="23:00">23:00</option>
+                <option value="23:30">23:30</option>
+                <option value="00:00">00:00</option>
+              </select>
+            </div>
+
+            <div class="flex justify-between mb-4">
+              <label for="session-duration-weekend">Duração da sessão</label>
+              <select name="session-duration-weekend" id="session-duration-weekend" required class="border-2 rounded-sm border-blue-600 px-2 py-1 bg-zinc-300">
+                <option value="00:15">15 minutos</option>
+                <option value="00:20">20 minutos</option>
+                <option value="00:25">25 minutos</option>
+                <option value="00:30">30 minutos</option>
+                <option value="00:45">45 minutos</option>
+                <option value="00:60">60 minutos</option>
+              </select>
+            </div>
+          </details>
 
           <p class="mb-4">As preferências serão aplicadas quando você apagar todos seus agendamentos.</p>
 

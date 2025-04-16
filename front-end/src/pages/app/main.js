@@ -1,3 +1,4 @@
+import { SchedulesStorage } from "../../utils/SchedulesStorage";
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
@@ -5,14 +6,18 @@ import { returnUserExceededTestTime } from "../../utils/returnUserExceededTestTi
 import logo from "/assets/logo.png";
 import "/assets/style.css";
 
-const logofgButton = document.querySelector("[data-js='logoff-button']");
+const logoffButton = document.querySelector("[data-js='logoff-button']");
 const userPreferencesButton = document.querySelector("[data-js='user-preferences-button']");
 const saveUserPreferencesButton = document.querySelector("[data-js='user-preferences-modal'] [data-js='save-button']");
+const daysTab = Array.from(document.querySelectorAll('[data-js="day-tab"]'));
+const closeDaySchedulesModalButton = document.querySelector('[data-js="close-day-schedules-modal"]');
 const deleteSchedulesButton = document.querySelector("[data-js='delete-schedules']");
 const copyTableButton = document.querySelector("[data-js='copy-table']");
 const modalCloseButtons = Array.from(document.querySelectorAll("[data-js='close-button']"));
 const translatedDaysOfTheWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 
+const schedulesStorage = new SchedulesStorage();
+let userPreferences = {};
 const debouncedSaveDataOnLocalStorage = debounce(saveDataOnLocalStorage, 1500);
 
 document.querySelector('[data-js="logo"]').src = logo;
@@ -44,7 +49,7 @@ function showUserData(name, picture, is_premium) {
     </p>
     ${
       picture
-        ? `<button data-js="toggle-user-modal"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500" /></button>`
+        ? `<button data-js="toggle-user-modal"><img src="${picture}" alt="${name} foto" class="w-10 h-10 rounded-full bg-blue-500 text-[10px]" /></button>`
         : `<button data-js="toggle-user-modal" class="flex justify-center items-center w-10 h-10 rounded-full bg-blue-700 font-bold text-white">${getInittials(
             name
           )}</button>`
@@ -58,7 +63,7 @@ function showUserData(name, picture, is_premium) {
   document.querySelector('[data-js="user-modal-username"]').textContent = name;
 
   userDataPlaceholder.innerHTML = userInfoHtml;
-  userDataPlaceholder.querySelector('[data-js="toggle-user-modal"]').addEventListener("click", toggleUserModal)
+  userDataPlaceholder.querySelector('[data-js="toggle-user-modal"]').addEventListener("click", toggleUserModal);
 }
 
 function toggleUserModal() {
@@ -72,7 +77,7 @@ function getInittials(name) {
 }
 
 function parseUserData({ name, picture, created_at, is_premium }) {
-  const userExceededTestTime = returnUserExceededTestTime(created_at, is_premium)
+  const userExceededTestTime = returnUserExceededTestTime(created_at, is_premium);
 
   if (userExceededTestTime) {
     location.href = "/premium/";
@@ -85,12 +90,16 @@ function parseUserData({ name, picture, created_at, is_premium }) {
 function saveDataOnLocalStorage() {
   // debounce save data on local storage
   const nameInputs = document.querySelectorAll('[data-js="schedule"] [data-js="name-input"]');
-  const localUserPreferences = JSON.parse(localStorage.getItem("schedules")).localUserPreferences
+  const localUserPreferences = JSON.parse(localStorage.getItem("schedules")).localUserPreferences;
   let newSchedules = { data: {}, localUserPreferences: localUserPreferences };
 
   for (const input of nameInputs) {
-    const isDisabled = input.parentElement.dataset.disabled == "true"
-    newSchedules.data[input.parentElement.firstElementChild.textContent] = {name: input.value, isDisabled: isDisabled, duration: localUserPreferences.sessionDuration};  // set time element as object key
+    const isDisabled = input.parentElement.dataset.disabled == "true";
+    newSchedules.data[input.parentElement.firstElementChild.textContent] = {
+      name: input.value,
+      isDisabled: isDisabled,
+      duration: localUserPreferences.sessionDuration,
+    }; // set time element as object key
   }
 
   showAmountOfFilledSchedules(returnAmountOfFilledSchedules(newSchedules.data));
@@ -100,16 +109,94 @@ function saveDataOnLocalStorage() {
   createToaster("Dados salvos");
 }
 
-function allocateSpaceForSchedulesInLocalStorage() {
-  const schedulesData = JSON.parse(localStorage.getItem("schedules"))?.data
-  const schedulesDataIsInRightFormat = schedulesData && typeof schedulesData[Object.keys(schedulesData)[0]] === "object"   // In case scheduler data is on the old format, with key/string pairs
-  console.log(schedulesDataIsInRightFormat)
+function removeOldLocalStorageData() {
+  localStorage.removeItem("schedules");
+  localStorage.removeItem("userPreferences");
+}
 
-  if (!schedulesDataIsInRightFormat) {
-    localStorage.setItem("schedules", '{"data": {}, "localUserPreferences": {}}');
+async function getUserPreferences() {
+  const userPreferences = localStorage.getItem("userPreferences");
+  const userPreferencesAreSet = userPreferences && JSON.parse(userPreferences).businessType; // returns if user preferences are set / in the newest format
+
+  if (!userPreferencesAreSet) {
+    const defaultUserPreferences = await import("../../utils/defaultUserPreferences.json");
+
+    removeOldLocalStorageData();
+
+    localStorage.setItem("userPreferences", JSON.stringify(defaultUserPreferences));
+
+    openUserPreferences();
+
+    return defaultUserPreferences;
   }
-  if (!localStorage.getItem("userPreferences")) {
-    localStorage.setItem("userPreferences", '{"openingTime": "08:00", "closingTime": "18:30", "sessionDuration": 30}');
+
+  return JSON.parse(userPreferences);
+}
+
+function reflectUserPreferences() {
+  const groupedUserPreferences = groupUserPreferencesFields();
+
+  // Apply business type
+  groupedUserPreferences["business-type"].value = userPreferences.businessType;
+
+  // Apply days open
+  groupedUserPreferences["days-open"].forEach((input) => {
+    input.checked = userPreferences.daysOpen.includes(input.value);
+  });
+
+  // Apply normal session preferences
+  groupedUserPreferences["opening-time"].value = userPreferences.nomalSessions.openingTime;
+  groupedUserPreferences["closing-time"].value = userPreferences.nomalSessions.closingTime;
+  groupedUserPreferences["session-duration"].value = userPreferences.nomalSessions.sessionDuration;
+
+  // Apply include customer name in table copy
+  groupedUserPreferences["include-customer-name-in-copy"].checked = userPreferences.includeFilledSessionInTableCopy;
+
+  // Apply lunch preferences
+  groupedUserPreferences["closes-for-lunch"].checked = userPreferences.lunchTime.hasLunch;
+  groupedUserPreferences["lunch-starting-time"].value = userPreferences.lunchTime.start;
+  groupedUserPreferences["lunch-duration-time"].value = userPreferences.lunchTime.interval;
+
+  // Apply weekend session preferences
+  groupedUserPreferences["opening-time-weekend"].value = userPreferences.saturdaySundaySessions.openingTime;
+  groupedUserPreferences["closing-time-weekend"].value = userPreferences.saturdaySundaySessions.closingTime;
+  groupedUserPreferences["session-duration-weekend"].value = userPreferences.saturdaySundaySessions.sessionDuration;
+}
+
+function groupUserPreferencesFields() {
+  const userPreferencesForm = document.querySelector("[data-js='user-preferences-form']");
+  const formFields = Array.from(userPreferencesForm.querySelectorAll("[name]"));
+
+  const groupedElements = {
+    "business-type": null,
+    "days-open": [],
+    "opening-time": null,
+    "closing-time": null,
+    "session-duration": null,
+    "include-customer-name-in-copy": null,
+    "closes-for-lunch": null,
+    "lunch-starting-time": null,
+    "lunch-duration-time": null,
+    "opening-time-weekend": null,
+    "closing-time-weekend": null,
+    "session-duration-weekend": null,
+  };
+
+  formFields.forEach((field) => {
+    const fieldName = field.name;
+    if (groupedElements[fieldName] !== undefined) {
+      Array.isArray(groupedElements[fieldName]) ? groupedElements[field.name].push(field) : (groupedElements[field.name] = field);
+    }
+  });
+
+  return groupedElements;
+}
+
+async function openIndexedDB() {
+  try {
+    await schedulesStorage.init();
+  } catch (error) {
+    createToaster("Erro ao acessar banco de dados", "error");
   }
 }
 
@@ -125,13 +212,13 @@ function defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOf
 
 function getNewUserPreferences() {
   const userPreferencesSelects = document.querySelectorAll("[data-js='user-preferences-modal'] select");
-  const newUserPreferences = {}
+  const newUserPreferences = {};
 
   for (const select of userPreferencesSelects) {
     newUserPreferences[select.name] = select.value;
   }
 
-  return newUserPreferences
+  return newUserPreferences;
 }
 
 function returnAmountOfFilledSchedules(savedSchedulesData) {
@@ -161,6 +248,18 @@ function reflectUserPreferencesOnPreferencsForm() {
   });
 }
 
+function openDaySchedulesModal(event) {
+  const dayName = event.target.dataset.day;
+  const daySchedulesModal = document.querySelector('[data-js="day-schedules-modal"]');
+
+  daySchedulesModal.setAttribute("data-open", true);
+}
+
+function closeDaySchedulesModal() {
+  const daySchedulesModal = document.querySelector('[data-js="day-schedules-modal"]');
+  daySchedulesModal.removeAttribute("data-open");
+}
+
 function populateAppWithSchedules(savedSchedules, recalculate = false) {
   const fragment = document.createDocumentFragment();
   const scheduleTemplate = document.getElementById("schedule");
@@ -178,22 +277,24 @@ function populateAppWithSchedules(savedSchedules, recalculate = false) {
     const time = schedule.querySelector('[data-js="time"]');
     const input = schedule.querySelector('[data-js="name-input"]');
     const deleteCustomerButton = schedule.querySelector('[data-js="delete-button"]');
-    const disableScheduleButton = schedule.querySelector('[data-js="disable-button"]')
+    const disableScheduleButton = schedule.querySelector('[data-js="disable-button"]');
 
     time.textContent = currentTime.toString();
     time.setAttribute("datetime", currentTime.toString());
     input.addEventListener("input", debouncedSaveDataOnLocalStorage);
     deleteCustomerButton.addEventListener("click", deleteCustomer);
-    disableScheduleButton.addEventListener("click", disableSchedule)
+    disableScheduleButton.addEventListener("click", disableSchedule);
 
-    if (currentTime.toString() in savedSchedules.data) {    // in case theres no schedules in localStorage
+    if (currentTime.toString() in savedSchedules.data) {
+      // in case theres no schedules in localStorage
       input.value = savedSchedules.data[currentTime.toString()].name;
 
-      if (savedSchedules.data[currentTime.toString()].isDisabled) {  // apply disabled state if schedule is disabled in storage
+      if (savedSchedules.data[currentTime.toString()].isDisabled) {
+        // apply disabled state if schedule is disabled in storage
         schedule.firstElementChild.setAttribute("data-disabled", "true");
-        disableScheduleButton.firstElementChild.textContent = "ativar"
-        input.disabled = true
-        disableScheduleButton.lastElementChild.setAttribute("class", "fa-solid fa-eye-slash")
+        disableScheduleButton.firstElementChild.textContent = "ativar";
+        input.disabled = true;
+        disableScheduleButton.lastElementChild.setAttribute("class", "fa-solid fa-eye-slash");
       }
     }
 
@@ -238,22 +339,20 @@ function deleteCustomer(event) {
 }
 
 function disableSchedule(event) {
-  const clickedButton = event.target.matches('[data-js="disable-button"]') 
-    ? event.target 
-    : event.target.closest('[data-js="disable-button"]');
+  const clickedButton = event.target.matches('[data-js="disable-button"]') ? event.target : event.target.closest('[data-js="disable-button"]');
   const scheduleItem = clickedButton.closest('[data-js="schedule"]');
-  const input = scheduleItem.querySelector('[data-js="name-input"]')
+  const input = scheduleItem.querySelector('[data-js="name-input"]');
   const isDisabled = scheduleItem.getAttribute("data-disabled") === "true";
 
   if (isDisabled) {
     scheduleItem.setAttribute("data-disabled", "false");
     clickedButton.firstElementChild.textContent = "desativar";
-    input.disabled = false
+    input.disabled = false;
     clickedButton.lastElementChild.setAttribute("class", "fa-solid fa-eye");
   } else {
     scheduleItem.setAttribute("data-disabled", "true");
     clickedButton.firstElementChild.textContent = "ativar";
-    input.disabled = true
+    input.disabled = true;
     clickedButton.lastElementChild.setAttribute("class", "fa-solid fa-eye-slash");
   }
 
@@ -288,24 +387,23 @@ function applyUserPreferencesEffects(newUserPreferences) {
 }
 
 function populateSchedulesDataOnLocalStorage(newUserPreferences) {
-  newUserPreferences = newUserPreferences ? newUserPreferences  : JSON.parse(localStorage.getItem("userPreferences"))
+  newUserPreferences = newUserPreferences ? newUserPreferences : JSON.parse(localStorage.getItem("userPreferences"));
 
-  const schedulesObject = Array.from(document.querySelectorAll('[data-js="schedule"]'))
-    .reduce((curr, schedule) => {
-      curr[schedule.firstElementChild.textContent] = {
-        name: schedule.querySelector("input").value,
-        isDisabled: schedule.dataset.disabled === "true",
-        duration: newUserPreferences.sessionDuration
-      };
-      return curr
-    }, {})
+  const schedulesObject = Array.from(document.querySelectorAll('[data-js="schedule"]')).reduce((curr, schedule) => {
+    curr[schedule.firstElementChild.textContent] = {
+      name: schedule.querySelector("input").value,
+      isDisabled: schedule.dataset.disabled === "true",
+      duration: newUserPreferences.sessionDuration,
+    };
+    return curr;
+  }, {});
 
-  localStorage.setItem("schedules", JSON.stringify({data: schedulesObject, localUserPreferences: newUserPreferences}))
+  localStorage.setItem("schedules", JSON.stringify({ data: schedulesObject, localUserPreferences: newUserPreferences }));
 }
 
 function populateSchedulesDataOnLocalStorageIfItsEmpty() {
   if (!Object.keys(JSON.parse(localStorage.getItem("schedules")).data).length) {
-    populateSchedulesDataOnLocalStorage()
+    populateSchedulesDataOnLocalStorage();
   }
 }
 
@@ -348,7 +446,7 @@ function copyTable() {
   const savedSchedules = JSON.parse(localStorage.getItem("schedules")).data;
 
   for (let schedule in savedSchedules) {
-    const scheduleIsNotDisabled = savedSchedules[schedule].isDisabled != true
+    const scheduleIsNotDisabled = savedSchedules[schedule].isDisabled != true;
 
     if (scheduleIsNotDisabled) outputText += `${schedule} - ${savedSchedules[schedule].name}\n`;
   }
@@ -391,38 +489,42 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  validateUser(true).then((userData) => {
-    if (!userData) {
-      window.location.href = "/login/";
-    }
+  // validateUser(true).then((userData) => {
+  //   if (!userData) {
+  //     window.location.href = "/login/";
+  //   }
 
-    parseUserData(userData);
-  });
+  //   parseUserData(userData);
+  // });
 
-  allocateSpaceForSchedulesInLocalStorage();
+  userPreferences = await getUserPreferences();
+  reflectUserPreferences();
+  openIndexedDB();
 
-  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
-  const openedUserPreferencesOnce = localStorage.getItem("openedUserPreferences");
-  const amountOfFilledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
+  // const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
+  // const openedUserPreferencesOnce = localStorage.getItem("openedUserPreferences");
+  // const amountOfFilledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
-  if (!openedUserPreferencesOnce) {
-    openUserPreferences();
-  }
+  // if (!openedUserPreferencesOnce) {
+  //   openUserPreferences();
+  // }
 
-  showAmountOfFilledSchedules(amountOfFilledSchedules);
-  defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules);
-  reflectUserPreferencesOnPreferencsForm();
-  populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
-  populateSchedulesDataOnLocalStorageIfItsEmpty()
+  // showAmountOfFilledSchedules(amountOfFilledSchedules);
+  // defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules);
+  // reflectUserPreferencesOnPreferencsForm();
+  // populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
+  // populateSchedulesDataOnLocalStorageIfItsEmpty();
 
   window.toggleUserModal = toggleUserModal;
 }
 
 main();
 
-logofgButton.addEventListener("click", logoffAccount);
+logoffButton.addEventListener("click", logoffAccount);
 userPreferencesButton.addEventListener("click", openUserPreferences);
 saveUserPreferencesButton.addEventListener("click", saveUserPreferences);
+daysTab.forEach((dayTab) => dayTab.addEventListener("click", openDaySchedulesModal));
+closeDaySchedulesModalButton.addEventListener("click", closeDaySchedulesModal);
 deleteSchedulesButton.addEventListener("click", openConfirmDeleteModal);
 copyTableButton.addEventListener("click", copyTable);
 modalCloseButtons.forEach((button) => button.addEventListener("click", closeAssociatedModal));

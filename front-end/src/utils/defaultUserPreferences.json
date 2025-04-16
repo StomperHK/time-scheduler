@@ -1,0 +1,20 @@
+{
+  "businessType": "other",
+  "daysOpen": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+  "includeFilledSessionInTableCopy": true,
+  "lunchTime": {
+    "hasLunch": true,
+    "start": "12:00",
+    "interval": "01:30"
+  },
+  "nomalSessions": {
+    "openingTime": "08:00",
+    "closingTime": "18:30",
+    "sessionDuration": "00:30"
+  },
+  "saturdaySundaySessions": {
+    "openingTime": "08:00",
+    "closingTime": "12:00",
+    "sessionDuration": "00:30"
+  }
+}
