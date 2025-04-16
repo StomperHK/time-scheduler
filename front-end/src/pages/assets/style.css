@@ -13,6 +13,10 @@
   text-shadow: none;
 }
 
+@utility transition-transform-visibility {
+  transition: transform 200ms ease-out, visibility 0ms 200ms;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -46,7 +50,7 @@
 
 @layer components {
   .btn {
-    @apply min-w-10 h-10 p-2 px-3 bg-blue-600 text-white cursor-pointer transition-colors rounded-md active:bg-blue-700;
+    @apply min-w-10 h-10 p-2 px-3 bg-blue-600 text-white cursor-pointer transition-colors rounded-sm active:bg-blue-700;
   }
 
   .btn-text {
@@ -66,11 +70,15 @@
   }
 
   .modal > div {
-    @apply absolute top-1/2 left-1/2 -translate-1/2 w-[80%] max-w-[500px] min-w-[280px] p-4 rounded-md bg-zinc-200
+    @apply max-h-[80%] overflow-auto absolute top-1/2 left-1/2 -translate-1/2 w-[80%] max-w-[500px] min-w-[280px] p-4 rounded-md bg-zinc-200
   }
 
   .modal .modal-header {
     @apply flex justify-between items-center mb-6;
+  }
+
+  .checkbox {
+    @apply appearance-none p-1 w-5 h-5 rounded-sm bg-clip-content border-2 border-blue-600 checked:bg-blue-600 
   }
 
   .toast .body {
