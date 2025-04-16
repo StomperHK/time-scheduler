@@ -239,15 +239,6 @@ function showAmountOfFilledSchedules(amountOfFilledSchedules) {
   amountOfSchedules.textContent = amountOfFilledSchedules + " cliente(s) para hoje";
 }
 
-function reflectUserPreferencesOnPreferencsForm() {
-  const userPreferences = JSON.parse(localStorage.getItem("userPreferences"));
-  const userPreferencesSelects = Array.from(document.querySelectorAll("[data-js='user-preferences-modal'] select"));
-
-  userPreferencesSelects.forEach((select) => {
-    select.value = userPreferences[select.name];
-  });
-}
-
 function openDaySchedulesModal(event) {
   const dayName = event.target.dataset.day;
   const daySchedulesModal = document.querySelector('[data-js="day-schedules-modal"]');
@@ -367,10 +358,31 @@ function openUserPreferences() {
 }
 
 function saveUserPreferences() {
-  const newUserPreferences = getNewUserPreferences();
-  applyUserPreferencesEffects(newUserPreferences);
-  populateSchedulesDataOnLocalStorage(newUserPreferences);
+  const groupedUserPreferences = groupUserPreferencesFields();
 
+  const newUserPreferences = {
+    businessType: groupedUserPreferences["business-type"].value,
+    daysOpen: groupedUserPreferences["days-open"].filter((input) => input.checked).map((input) => input.value),
+    includeFilledSessionInTableCopy: groupedUserPreferences["include-customer-name-in-copy"].checked,
+    lunchTime: {
+      hasLunch: groupedUserPreferences["closes-for-lunch"].checked,
+      start: groupedUserPreferences["lunch-starting-time"].value,
+      interval: groupedUserPreferences["lunch-duration-time"].value,
+    },
+    nomalSessions: {
+      openingTime: groupedUserPreferences["opening-time"].value,
+      closingTime: groupedUserPreferences["closing-time"].value,
+      sessionDuration: groupedUserPreferences["session-duration"].value,
+    },
+    saturdaySundaySessions: {
+      openingTime: groupedUserPreferences["opening-time-weekend"].value,
+      closingTime: groupedUserPreferences["closing-time-weekend"].value,
+      sessionDuration: groupedUserPreferences["session-duration-weekend"].value,
+    },
+  };
+
+  userPreferences = newUserPreferences;
+  localStorage.setItem("userPreferences", JSON.stringify(newUserPreferences));
   createToaster("Preferências salvas");
 }
 
