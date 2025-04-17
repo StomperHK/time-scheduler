@@ -145,9 +145,9 @@ function reflectUserPreferences() {
   });
 
   // Apply normal session preferences
-  groupedUserPreferences["opening-time"].value = userPreferences.nomalSessions.openingTime;
-  groupedUserPreferences["closing-time"].value = userPreferences.nomalSessions.closingTime;
-  groupedUserPreferences["session-duration"].value = userPreferences.nomalSessions.sessionDuration;
+  groupedUserPreferences["opening-time"].value = userPreferences.normalSessions.openingTime;
+  groupedUserPreferences["closing-time"].value = userPreferences.normalSessions.closingTime;
+  groupedUserPreferences["session-duration"].value = userPreferences.normalSessions.sessionDuration;
 
   // Apply include customer name in table copy
   groupedUserPreferences["include-customer-name-in-copy"].checked = userPreferences.includeFilledSessionInTableCopy;
@@ -192,10 +192,50 @@ function groupUserPreferencesFields() {
   return groupedElements;
 }
 
+function createTimetableObject(sessionPreferences) {
+  const { openingTime, closingTime, sessionDuration } = sessionPreferences;
+  const currentTime = new ScheduleTime(...openingTime.split(":").map((n) => Number(n)));
+  const endTime = new ScheduleTime(...closingTime.split(":").map((n) => Number(n)));
+  const outputObject = {};
+
+  console.log(currentTime, closingTime, sessionDuration);
+
+  while (currentTime.isSmallerThanOrEqual(endTime)) {
+    const time = currentTime.toString();
+
+    outputObject[time] = { customers: [{ name: "", desc: "" }], isDisabled: false, duration: sessionDuration };
+
+    currentTime.increaseTime(sessionDuration);
+  }
+
+  return outputObject;
+}
+
+function populateDataOnIndexedDB() {
+  const daysOfTheWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  console.log("da")
+
+  daysOfTheWeek.forEach((day) => {
+    if (day === "saturday" || day === "sunday") {
+      const emptyTimetableObject = createTimetableObject(userPreferences.saturdaySundaySessions);
+      
+      schedulesStorage.addOrUpdate("DaySchedules", { id: day, data: emptyTimetableObject, localOpeningAndClosingTime: userPreferences.saturdaySundaySessions });
+    } else {
+      const emptyTimetableObject = createTimetableObject(userPreferences.normalSessions);
+
+      schedulesStorage.addOrUpdate("DaySchedules", { id: day, data: emptyTimetableObject, localOpeningAndClosingTime: userPreferences.normalSessions });
+    }
+  });
+}
+
 async function openIndexedDB() {
   try {
     await schedulesStorage.init();
+    const objectsInStoreCount = await schedulesStorage.countObjectsInStore("DaySchedules");
+
+    if (!objectsInStoreCount) populateDataOnIndexedDB();
   } catch (error) {
+    console.log(error);
     createToaster("Erro ao acessar banco de dados", "error");
   }
 }
@@ -369,7 +409,7 @@ function saveUserPreferences() {
       start: groupedUserPreferences["lunch-starting-time"].value,
       interval: groupedUserPreferences["lunch-duration-time"].value,
     },
-    nomalSessions: {
+    normalSessions: {
       openingTime: groupedUserPreferences["opening-time"].value,
       closingTime: groupedUserPreferences["closing-time"].value,
       sessionDuration: groupedUserPreferences["session-duration"].value,
@@ -517,13 +557,8 @@ async function main() {
   // const openedUserPreferencesOnce = localStorage.getItem("openedUserPreferences");
   // const amountOfFilledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
 
-  // if (!openedUserPreferencesOnce) {
-  //   openUserPreferences();
-  // }
-
   // showAmountOfFilledSchedules(amountOfFilledSchedules);
   // defineIfLocalUserPreferencesWillGetOverwritten(savedSchedules, amountOfFilledSchedules);
-  // reflectUserPreferencesOnPreferencsForm();
   // populateAppWithSchedules(savedSchedules, amountOfFilledSchedules);
   // populateSchedulesDataOnLocalStorageIfItsEmpty();
 

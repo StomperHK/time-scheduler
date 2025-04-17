@@ -66,6 +66,17 @@ export class SchedulesStorage {
     });
   }
 
+  async countObjectsInStore(storeName) {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([storeName], 'readonly');
+      const store = transaction.objectStore(storeName);
+      const request = store.count();
+
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = (event) => reject(`Error counting objects: ${event.target.errorCode}`);
+    });
+  }
+
   async getAll(storeName) {
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction([storeName], 'readonly');
