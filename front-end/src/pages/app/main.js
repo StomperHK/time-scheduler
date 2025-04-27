@@ -2,6 +2,8 @@ import { SchedulesStorage } from "../../utils/SchedulesStorage";
 import { ScheduleTime } from "../../utils/ScheduleTime";
 import { createToaster } from "../../utils/createToaster";
 import { validateUser } from "../../api/validateUser";
+import { userPreferencesObjectsAreDifferent } from "../../utils/userPreferencesObjectsAreDifferent";
+import { dayObjectStoreIsEmpty } from "../../utils/dayObjectStoreIsEmpty";
 import { returnUserExceededTestTime } from "../../utils/returnUserExceededTestTime";
 import logo from "/assets/logo.png";
 import "/assets/style.css";
@@ -133,7 +135,7 @@ async function getUserPreferences() {
   return JSON.parse(userPreferences);
 }
 
-function reflectUserPreferences() {
+function reflectStoredPreferencesOnForm() {
   const groupedUserPreferences = groupUserPreferencesFields();
 
   // Apply business type
@@ -161,6 +163,44 @@ function reflectUserPreferences() {
   groupedUserPreferences["opening-time-weekend"].value = userPreferences.saturdaySundaySessions.openingTime;
   groupedUserPreferences["closing-time-weekend"].value = userPreferences.saturdaySundaySessions.closingTime;
   groupedUserPreferences["session-duration-weekend"].value = userPreferences.saturdaySundaySessions.sessionDuration;
+
+  reflectUserPreferencesOnApp();
+}
+
+async function reflectUserPreferencesOnApp() {
+  await openIndexedDB()
+
+  const emptySaturdaySundayDayData = createDayDataObject(userPreferences.saturdaySundaySessions)
+  const emptyNormalDayData = createDayDataObject(userPreferences.normalSessions)
+
+  daysTab.forEach(async (dayTab) => {
+    const dayName = dayTab.dataset.day
+    const dayObjectStore = await schedulesStorage.get("DaySchedules", dayName);
+
+    if (!userPreferences.daysOpen.includes(dayName)) dayTab.parentElement.classList.add("hidden");
+    
+    else {
+      dayTab.parentElement.classList.remove("hidden");
+    }
+
+    if (dayName === "saturday" || dayName === "sunday") {   // verifies if the object store preferences is different from the global user preferences, if so, if there are no customers in the object store reset it based on the global saturday sunday sessions
+      if (userPreferencesObjectsAreDifferent(dayObjectStore.localUserPreferences, userPreferences.saturdaySundaySessions)) {
+        if (dayObjectStoreIsEmpty(dayObjectStore.data)) {
+          schedulesStorage.addOrUpdate("DaySchedules", {id: dayName, data: emptySaturdaySundayDayData, localUserPreferences: userPreferences.saturdaySundaySessions})
+        }
+      }
+    }
+
+    else {    // resets the day objects based on normal sessions
+      if (userPreferencesObjectsAreDifferent(dayObjectStore.localUserPreferences, userPreferences.normalSessions)) {
+        if (dayObjectStoreIsEmpty(dayObjectStore.data)) {
+          schedulesStorage.addOrUpdate("DaySchedules", {id: dayName, data: emptyNormalDayData, localUserPreferences: userPreferences.normalSessions})
+        }
+      }
+    }
+  })
+
+  reflectUserPreferencesOnApp()
 }
 
 function groupUserPreferencesFields() {
@@ -192,13 +232,11 @@ function groupUserPreferencesFields() {
   return groupedElements;
 }
 
-function createTimetableObject(sessionPreferences) {
+function createDayDataObject(sessionPreferences) {
   const { openingTime, closingTime, sessionDuration } = sessionPreferences;
   const currentTime = new ScheduleTime(...openingTime.split(":").map((n) => Number(n)));
   const endTime = new ScheduleTime(...closingTime.split(":").map((n) => Number(n)));
   const outputObject = {};
-
-  console.log(currentTime, closingTime, sessionDuration);
 
   while (currentTime.isSmallerThanOrEqual(endTime)) {
     const time = currentTime.toString();
@@ -213,15 +251,14 @@ function createTimetableObject(sessionPreferences) {
 
 function populateDataOnIndexedDB() {
   const daysOfTheWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-  console.log("da")
 
   daysOfTheWeek.forEach((day) => {
     if (day === "saturday" || day === "sunday") {
-      const emptyTimetableObject = createTimetableObject(userPreferences.saturdaySundaySessions);
+      const emptyTimetableObject = createDayDataObject(userPreferences.saturdaySundaySessions);
       
       schedulesStorage.addOrUpdate("DaySchedules", { id: day, data: emptyTimetableObject, localOpeningAndClosingTime: userPreferences.saturdaySundaySessions });
     } else {
-      const emptyTimetableObject = createTimetableObject(userPreferences.normalSessions);
+      const emptyTimetableObject = createDayDataObject(userPreferences.normalSessions);
 
       schedulesStorage.addOrUpdate("DaySchedules", { id: day, data: emptyTimetableObject, localOpeningAndClosingTime: userPreferences.normalSessions });
     }
@@ -426,18 +463,6 @@ function saveUserPreferences() {
   createToaster("Preferências salvas");
 }
 
-function applyUserPreferencesEffects(newUserPreferences) {
-  const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
-  const filledSchedules = returnAmountOfFilledSchedules(savedSchedules.data);
-
-  if (!filledSchedules) {
-    savedSchedules.localUserPreferences = newUserPreferences;
-    localStorage.setItem("schedules", JSON.stringify(savedSchedules));
-
-    populateAppWithSchedules(savedSchedules, true);
-  }
-}
-
 function populateSchedulesDataOnLocalStorage(newUserPreferences) {
   newUserPreferences = newUserPreferences ? newUserPreferences : JSON.parse(localStorage.getItem("userPreferences"));
 
@@ -541,17 +566,16 @@ window.addEventListener("beforeinstallprompt", (e) => {
 });
 
 async function main() {
-  // validateUser(true).then((userData) => {
-  //   if (!userData) {
-  //     window.location.href = "/login/";
-  //   }
+  validateUser(true).then((userData) => {
+    if (!userData) {
+      window.location.href = "/login/";
+    }
 
-  //   parseUserData(userData);
-  // });
+    parseUserData(userData);
+  });
 
   userPreferences = await getUserPreferences();
-  reflectUserPreferences();
-  openIndexedDB();
+  reflectStoredPreferencesOnForm();
 
   // const savedSchedules = JSON.parse(localStorage.getItem("schedules"));
   // const openedUserPreferencesOnce = localStorage.getItem("openedUserPreferences");

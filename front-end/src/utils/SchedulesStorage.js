@@ -38,6 +38,7 @@ export class SchedulesStorage {
       const transaction = this.db.transaction([storeName], 'readwrite');
       const store = transaction.objectStore(storeName);
       const request = store.put(data);
+      console.log("changed: " + data.id)
 
       request.onsuccess = () => resolve();
       request.onerror = (event) => reject(`Error adding/updating data: ${event.target.errorCode}`);
